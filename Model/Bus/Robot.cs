@@ -1,4 +1,4 @@
-﻿namespace ScalingSpoon.Bus
+﻿namespace ScalingSpoon.Model.Bus
 {
     public class Robot
     {

@@ -13,7 +13,7 @@ namespace ScalingSpoon
         /// </summary>
         [STAThread]
         static void Main()
-        {
+        {    
             Console.WriteLine("Is this properly set as the startup project?");
             Console.WriteLine("It looks like I'm used to quite a few Resharper commands.");
             Console.WriteLine("Testing GitHub changes.");

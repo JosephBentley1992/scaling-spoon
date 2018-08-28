@@ -46,7 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Robot.cs" />
+    <Compile Include="Model\Bus\Cell.cs" />
+    <Compile Include="Model\Bus\DestinationCell.cs" />
+    <Compile Include="Model\Bus\Robot.cs" />
+    <Compile Include="Model\Bus\RobotCell.cs" />
+    <Compile Include="Model\Bus\RobotMove.cs" />
+    <Compile Include="Model\Engine.cs" />
+    <Compile Include="Model\Enums\Direction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -74,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Control\" />
-    <Folder Include="Model\Bus\" />
     <Folder Include="VIew\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
