@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,7 +50,6 @@
     <Compile Include="Model\Bus\Cell.cs" />
     <Compile Include="Model\Bus\DestinationCell.cs" />
     <Compile Include="Model\Bus\Robot.cs" />
-    <Compile Include="Model\Bus\RobotCell.cs" />
     <Compile Include="Model\Bus\RobotMove.cs" />
     <Compile Include="Model\Engine.cs" />
     <Compile Include="Model\Enums\Direction.cs" />
@@ -81,6 +81,9 @@
   <ItemGroup>
     <Folder Include="Control\" />
     <Folder Include="VIew\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

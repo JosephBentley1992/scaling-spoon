@@ -9,6 +9,7 @@
         public bool HasWestWall { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
+        public int RobotID { get; set; } = -1;
         public Cell()
         {
         }
@@ -27,6 +28,16 @@
             HasWestWall = hasWestWall;
             X = x;
             Y = y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.X == ((Cell)obj).X && this.Y == ((Cell)obj).Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.X * this.Y * base.GetHashCode();
         }
     }
 }

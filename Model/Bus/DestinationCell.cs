@@ -5,8 +5,8 @@ namespace ScalingSpoon.Model.Bus
     public class DestinationCell : Cell
     {
         public int WinningRobotId { get; set; }
-        public List<RobotCell> RobotInitialLocations { get; set; }
-        public List<RobotCell> RobotFinalLocations { get; set; }
+        public Dictionary<int, Cell> RobotInitialLocations { get; set; }
+        public Dictionary<int, Cell> RobotFinalLocations { get; set; }
         public Stack<RobotMove> MoveHistory { get; set; }
         public Queue<RobotMove> PoppedHistory { get; set; }
 

@@ -16,15 +16,15 @@ namespace ScalingSpoon.Model
     /// </summary>
     public class Engine
     {
-        public Cell[][] Board { get; set; }
-        public List<RobotCell> RobotInitialLocations { get; set; }
-        public List<RobotCell> RobotCurrentLocations { get; set; }
+        public Cell[,] Board { get; set; }
+        public Dictionary<int, Cell> RobotInitialLocations { get; set; }
+        public Dictionary<int, Cell> RobotCurrentLocations { get; set; }
         public List<DestinationCell> WinningDestinations { get; set; }
         public DestinationCell CurrentWinningDestination { get; set; }
 
         public Engine()
         {
-            
+
         }
 
         /// <summary>
@@ -47,13 +47,59 @@ namespace ScalingSpoon.Model
 
         public void MoveRobot(int robot, Direction d)
         {
-            //TODO: Try to write tests first! but... without board generation code?... I could Unit Test a 3x3 board for starters.
+            switch (d)
+            {
+                case Direction.Up:
+                    MoveUp(robot);
+                    break;
+                case Direction.Right:
+                    MoveRight(robot);
+                    break;
+                case Direction.Down:
+                    MoveDown(robot);
+                    break;
+                case Direction.Left:
+                    MoveLeft(robot);
+                    break;
+            }
         }
 
-        public RobotCell UndoMove()
+        private void MoveUp(int robot)
+        {
+            Cell loc = this.RobotCurrentLocations[robot];
+            if (loc.HasNorthWall || loc.X == 0)
+                return;
+
+            Cell temp;
+            for (int i = loc.X - 1; i >= 0; i--)
+            {
+                temp = this.Board[i, loc.Y];
+                if (temp.HasNorthWall || temp.RobotID != -1)
+                {
+                    this.RobotCurrentLocations[robot] = temp;
+                    return;
+                }
+            }
+        }
+
+        private void MoveRight(int robot)
+        {
+
+        }
+
+        private void MoveDown(int robot)
+        {
+
+        }
+
+        private void MoveLeft(int robot)
+        {
+
+        }
+
+        public void UndoMove()
         {
             //TODO: Figure out how to structure the difference between Undo'ing a move on the current puzzle, vs Undo'ing a historic puzzle.
-            return new RobotCell(new Robot(), new Cell());
         }
     }
 }
