@@ -38,7 +38,7 @@ namespace ScalingSpoonTests
         }
 
         [TestMethod]
-        public void RobotCollidesWithLeftOfBoard()
+        public void RobotCollidesWithRightOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
@@ -55,7 +55,7 @@ namespace ScalingSpoonTests
         }
 
         [TestMethod]
-        public void RobotCollidesWithRightOfBoard()
+        public void RobotCollidesWithLeftOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right);
             _model.MoveRobot(_robot.Id, Direction.Down);
