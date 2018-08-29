@@ -2,18 +2,18 @@
 {
     public class RobotMove
     {
-        public Robot Robot { get; set; }
+        public int RobotId { get; set; }
         public Cell StartingCell { get; set; }
         public Cell EndingCell { get; set; }
 
-        public RobotMove(Robot r)
+        public RobotMove(int robot)
         {
-            Robot = r;
+            RobotId = robot;
         }
 
-        public RobotMove(Robot r, Cell start, Cell end)
+        public RobotMove(int robot, Cell start, Cell end)
         {
-            Robot = r;
+            RobotId = robot;
             StartingCell = start;
             EndingCell = end;
         }

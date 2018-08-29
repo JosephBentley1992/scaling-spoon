@@ -11,7 +11,7 @@ namespace ScalingSpoon
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        //[STAThread]
         static void Main()
         {    
             Console.WriteLine("Is this properly set as the startup project?");

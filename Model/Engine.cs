@@ -66,35 +66,94 @@ namespace ScalingSpoon.Model
 
         private void MoveUp(int robot)
         {
-            Cell loc = this.RobotCurrentLocations[robot];
-            if (loc.HasNorthWall || loc.X == 0)
+            Cell initialLoc = this.RobotCurrentLocations[robot];
+            if (initialLoc.HasNorthWall || initialLoc.X == 0)
                 return;
 
-            Cell temp;
-            for (int i = loc.X - 1; i >= 0; i--)
+            Cell currentLoc = initialLoc;
+            Cell nextLoc;
+            for (int i = initialLoc.X - 1; i >= 0; i--)
             {
-                temp = this.Board[i, loc.Y];
-                if (temp.HasNorthWall || temp.RobotID != -1)
-                {
-                    this.RobotCurrentLocations[robot] = temp;
-                    return;
-                }
+                nextLoc = this.Board[i, initialLoc.Y];
+                if (nextLoc.HasSouthWall || nextLoc.RobotID != -1)
+                    break;
+
+                currentLoc = nextLoc;
             }
-        }
 
-        private void MoveRight(int robot)
-        {
-
+            initialLoc.RobotID = -1;
+            currentLoc.RobotID = robot;
+            this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
+            this.RobotCurrentLocations[robot] = currentLoc;
         }
 
         private void MoveDown(int robot)
         {
+            Cell initialLoc = this.RobotCurrentLocations[robot];
+            if (initialLoc.HasSouthWall || initialLoc.X == Board.GetLength(0) - 1)
+                return;
 
+            Cell currentLoc = initialLoc;
+            Cell nextLoc;
+            for (int i = initialLoc.X + 1; i <= Board.GetLength(0) - 1; i++)
+            {
+                nextLoc = this.Board[i, initialLoc.Y];
+                if (nextLoc.HasNorthWall || nextLoc.RobotID != -1)
+                    break;
+
+                currentLoc = nextLoc;
+            }
+
+            initialLoc.RobotID = -1;
+            currentLoc.RobotID = robot;
+            this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
+            this.RobotCurrentLocations[robot] = currentLoc;
         }
 
         private void MoveLeft(int robot)
         {
+            Cell initialLoc = this.RobotCurrentLocations[robot];
+            if (initialLoc.HasWestWall || initialLoc.Y == 0)
+                return;
 
+            Cell currentLoc = initialLoc;
+            Cell nextLoc;
+            for (int i = initialLoc.Y - 1; i >= 0; i--)
+            {
+                nextLoc = this.Board[initialLoc.X, i];
+                if (nextLoc.HasEastWall || nextLoc.RobotID != -1)
+                    break;
+
+                currentLoc = nextLoc;
+            }
+
+            initialLoc.RobotID = -1;
+            currentLoc.RobotID = robot;
+            this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
+            this.RobotCurrentLocations[robot] = currentLoc;
+        }
+
+        private void MoveRight(int robot)
+        {
+            Cell initialLoc = this.RobotCurrentLocations[robot];
+            if (initialLoc.HasEastWall || initialLoc.Y == Board.GetLength(1) - 1)
+                return;
+
+            Cell currentLoc = initialLoc;
+            Cell nextLoc;
+            for (int i = initialLoc.Y + 1; i <= Board.GetLength(1) - 1; i++)
+            {
+                nextLoc = this.Board[initialLoc.X, i];
+                if (nextLoc.HasWestWall || nextLoc.RobotID != -1)
+                    break;
+
+                currentLoc = nextLoc;
+            }
+
+            initialLoc.RobotID = -1;
+            currentLoc.RobotID = robot;
+            this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
+            this.RobotCurrentLocations[robot] = currentLoc;
         }
 
         public void UndoMove()

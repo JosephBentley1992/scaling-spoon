@@ -12,6 +12,10 @@ namespace ScalingSpoon.Model.Bus
 
         public DestinationCell()
         {
+            this.RobotInitialLocations = new Dictionary<int, Cell>();
+            this.RobotFinalLocations = new Dictionary<int, Cell>();
+            this.MoveHistory = new Stack<RobotMove>();
+            this.PoppedHistory = new Queue<RobotMove>();
         }
 
         public DestinationCell(int id)
