@@ -26,15 +26,7 @@ namespace ScalingSpoonTests
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
                     _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
 
-            _robot = new Robot(1);
-
-            _model.RobotInitialLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotCurrentLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotInitialLocations.Add(_robot.Id, _model.Board[0, 0]);
-            _model.RobotCurrentLocations.Add(_robot.Id, _model.Board[0, 0]);
-            _model.Board[0, 0].RobotID = _robot.Id;
-
-            _model.CurrentWinningDestination = new DestinationCell();
+            _robot = _model.CreateRobot(0, 0);
         }
 
         [TestMethod]
@@ -48,8 +40,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotCollidesWithBottomOfBoard()
         {
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Down);
+            _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 2);
         }
@@ -57,9 +48,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotCollidesWithLeftOfBoard()
         {
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Down);
-            _model.MoveRobot(_robot.Id, Direction.Left);
+            _model.MoveRobot(_robot.Id, Direction.Right,Direction.Down, Direction.Left);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
         }
@@ -67,10 +56,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotCollidesWithTopOfBoard()
         {
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Down);
-            _model.MoveRobot(_robot.Id, Direction.Left);
-            _model.MoveRobot(_robot.Id, Direction.Up);
+            _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Left, Direction.Up);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
         }
@@ -92,6 +78,7 @@ namespace ScalingSpoonTests
              * c c c c
              * d d d d
              */
+            _model = new Engine();
             _model.Board = new Cell[4, 4];
 
             int id = 0;
@@ -99,14 +86,7 @@ namespace ScalingSpoonTests
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
                     _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
 
-            _robot = new Robot(1);
-            _model.RobotInitialLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotCurrentLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotInitialLocations.Add(_robot.Id, _model.Board[0, 0]);
-            _model.RobotCurrentLocations.Add(_robot.Id, _model.Board[0, 0]);
-            _model.Board[0, 0].RobotID = _robot.Id;
-
-            _model.CurrentWinningDestination = new DestinationCell();
+            _robot = _model.CreateRobot(0, 0);
 
             _model.Board[0, 1].HasEastWall = true;
             _model.Board[0, 2].HasWestWall = true;
@@ -126,11 +106,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotCollidesWithWallMovingLeft()
         {
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Down);
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Up);
-            _model.MoveRobot(_robot.Id, Direction.Left);
+            _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Right, Direction.Up, Direction.Left);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 2);
         }
@@ -146,10 +122,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotCollidesWithWallMovingUp()
         {
-            _model.MoveRobot(_robot.Id, Direction.Right);
-            _model.MoveRobot(_robot.Id, Direction.Down);
-            _model.MoveRobot(_robot.Id, Direction.Left);
-            _model.MoveRobot(_robot.Id, Direction.Up);
+            _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Left, Direction.Up);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
             Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
         }
@@ -158,7 +131,7 @@ namespace ScalingSpoonTests
     [TestClass]
     public class MovementTestsRobots
     {
-        private static Engine _model = new Engine();
+        private static Engine _model;
         private static Robot _robotRed;
         private static Robot _robotBlue;
 
@@ -170,6 +143,7 @@ namespace ScalingSpoonTests
              * c c c c
              * d d d d
              */
+            _model = new Engine();
             _model.Board = new Cell[4, 4];
 
             int id = 0;
@@ -177,18 +151,8 @@ namespace ScalingSpoonTests
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
                     _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
 
-            _robotRed = new Robot(1);
-            _robotBlue = new Robot(2);
-            _model.RobotInitialLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotCurrentLocations = new System.Collections.Generic.Dictionary<int, Cell>();
-            _model.RobotInitialLocations.Add(_robotRed.Id, _model.Board[0, 0]);
-            _model.RobotCurrentLocations.Add(_robotRed.Id, _model.Board[0, 0]);
-            _model.RobotInitialLocations.Add(_robotBlue.Id, _model.Board[0, 3]);
-            _model.RobotCurrentLocations.Add(_robotBlue.Id, _model.Board[0, 3]);
-            _model.Board[0, 0].RobotID = _robotRed.Id;
-            _model.Board[0, 3].RobotID = _robotBlue.Id;
-
-            _model.CurrentWinningDestination = new DestinationCell();
+            _robotRed = _model.CreateRobot(0, 0);
+            _robotBlue = _model.CreateRobot(0, 3);
         }
 
         [TestMethod]
@@ -214,9 +178,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotsCollideMovingUp()
         {
-            _model.MoveRobot(_robotRed.Id, Direction.Down);
-            _model.MoveRobot(_robotRed.Id, Direction.Right);
-            _model.MoveRobot(_robotRed.Id, Direction.Up);
+            _model.MoveRobot(_robotRed.Id, Direction.Down, Direction.Right, Direction.Up);
             Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 1);
             Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 3);
             Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].X == 0);
@@ -226,8 +188,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void RobotsCollideMovingDown()
         {
-            _model.MoveRobot(_robotRed.Id, Direction.Down);
-            _model.MoveRobot(_robotRed.Id, Direction.Right);
+            _model.MoveRobot(_robotRed.Id, Direction.Down, Direction.Right);
             _model.MoveRobot(_robotBlue.Id, Direction.Down);
             Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 3);
             Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 3);

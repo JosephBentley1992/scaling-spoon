@@ -21,10 +21,14 @@ namespace ScalingSpoon.Model
         public Dictionary<int, Cell> RobotCurrentLocations { get; set; }
         public List<DestinationCell> WinningDestinations { get; set; }
         public DestinationCell CurrentWinningDestination { get; set; }
+        private int _robotID = 1;
 
         public Engine()
         {
-
+            this.RobotInitialLocations = new Dictionary<int, Cell>();
+            this.RobotCurrentLocations = new Dictionary<int, Cell>();
+            this.WinningDestinations = new List<DestinationCell>();
+            this.CurrentWinningDestination = new DestinationCell();
         }
 
         /// <summary>
@@ -45,22 +49,37 @@ namespace ScalingSpoon.Model
             //TODO: Good luck
         }
 
-        public void MoveRobot(int robot, Direction d)
+        public Robot CreateRobot(int x, int y)
         {
-            switch (d)
+            //TODO: Can't create a robot on the same Cell
+            //  Can't create a robot out of bounds of Board
+            //  Can't create a robot in a cell that is surrounded by walls (middle 2x2)
+            Robot r = new Robot(_robotID++);
+            this.RobotInitialLocations.Add(r.Id, this.Board[x, y]);
+            this.RobotCurrentLocations.Add(r.Id, this.Board[x, y]);
+            this.Board[x, y].RobotID = r.Id;
+            return r;
+        }
+
+        public void MoveRobot(int robot, params Direction[] directions)
+        {
+            foreach (Direction d in directions)
             {
-                case Direction.Up:
-                    MoveUp(robot);
-                    break;
-                case Direction.Right:
-                    MoveRight(robot);
-                    break;
-                case Direction.Down:
-                    MoveDown(robot);
-                    break;
-                case Direction.Left:
-                    MoveLeft(robot);
-                    break;
+                switch (d)
+                {
+                    case Direction.Up:
+                        MoveUp(robot);
+                        break;
+                    case Direction.Right:
+                        MoveRight(robot);
+                        break;
+                    case Direction.Down:
+                        MoveDown(robot);
+                        break;
+                    case Direction.Left:
+                        MoveLeft(robot);
+                        break;
+                }
             }
         }
 
