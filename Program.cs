@@ -16,6 +16,8 @@ namespace ScalingSpoon
         {
             Engine e = new Engine();
             e.ConstructBoard(16, 16, 16, 4);
+            //e.WriteBoardToConsole();
+            //Console.ReadLine();
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
