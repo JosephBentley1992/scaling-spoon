@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using ScalingSpoon.Model;
 namespace ScalingSpoon
 {
     static class Program
@@ -13,11 +13,9 @@ namespace ScalingSpoon
         /// </summary>
         //[STAThread]
         static void Main()
-        {    
-            Console.WriteLine("Is this properly set as the startup project?");
-            Console.WriteLine("It looks like I'm used to quite a few Resharper commands.");
-            Console.WriteLine("Testing GitHub changes.");
-
+        {
+            Engine e = new Engine();
+            e.ConstructBoard(16, 16, 16, 4);
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());

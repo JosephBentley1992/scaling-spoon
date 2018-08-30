@@ -88,11 +88,8 @@ namespace ScalingSpoonTests
 
             _robot = _model.CreateRobot(0, 0);
 
-            _model.Board[0, 1].HasEastWall = true;
-            _model.Board[0, 2].HasWestWall = true;
-
-            _model.Board[1, 0].HasSouthWall = true;
-            _model.Board[2, 0].HasNorthWall = true;
+            _model.CreateCellWall(_model.Board[0, 1], Direction.Right);
+            _model.CreateCellWall(_model.Board[1, 0], Direction.Down);
         }
 
         [TestMethod]

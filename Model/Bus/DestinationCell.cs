@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ScalingSpoon.Model.Bus
 {
+    [DebuggerDisplay("({X},{Y}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
     public class DestinationCell : Cell
     {
         public int WinningRobotId { get; set; }
@@ -27,6 +29,22 @@ namespace ScalingSpoon.Model.Bus
             : base(id, hasNorthWall, hasEastWall, hasSouthWall, hasWestWall, x, y)
         {
 
+        }
+
+        public DestinationCell(Cell c)
+        {
+            this.Id = c.Id;
+            this.HasNorthWall = c.HasNorthWall;
+            this.HasEastWall = c.HasEastWall;
+            this.HasSouthWall = c.HasSouthWall;
+            this.HasWestWall = c.HasWestWall;
+            this.X = c.X;
+            this.Y = c.Y;
+            this.RobotID = c.RobotID;
+            this.RobotInitialLocations = new Dictionary<int, Cell>();
+            this.RobotFinalLocations = new Dictionary<int, Cell>();
+            this.MoveHistory = new Stack<RobotMove>();
+            this.PoppedHistory = new Queue<RobotMove>();
         }
 
         public int NumberOfMoves()

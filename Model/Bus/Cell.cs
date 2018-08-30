@@ -1,5 +1,8 @@
-﻿namespace ScalingSpoon.Model.Bus
+﻿using System.Diagnostics;
+
+namespace ScalingSpoon.Model.Bus
 {
+    [DebuggerDisplay("({X},{Y}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
     public class Cell
     {
         public int Id { get; set; }
