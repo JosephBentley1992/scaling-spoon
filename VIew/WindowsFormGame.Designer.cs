@@ -38,6 +38,7 @@
             this.Name = "WindowsFormGame";
             this.Text = "WindowsFormGame";
             this.Load += new System.EventHandler(this.WindowsFormGame_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.WindowsFormGame_KeyDown);
             this.ResumeLayout(false);
 
         }

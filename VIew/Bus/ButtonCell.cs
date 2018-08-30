@@ -13,6 +13,7 @@ namespace ScalingSpoon.View.Bus
     public class ButtonCell : Button
     {
         private Cell _cell = new Cell();
+        private Dictionary<int, Color> _robotColors = new Dictionary<int, Color>();
         public ButtonCell()
         {
             
@@ -24,13 +25,21 @@ namespace ScalingSpoon.View.Bus
             this.Width = 32;
             this.Height = 32;
             this.Location = new Point(c.X * 32, c.Y * 32);
+            _robotColors.Add(0, Color.Red);
+            _robotColors.Add(1, Color.Green);
+            _robotColors.Add(2, Color.Yellow);
+            _robotColors.Add(3, Color.Blue);
         }
 
+        public Cell GetCell()
+        {
+            return _cell;
+        }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            SolidBrush b = new SolidBrush(Color.Black);
 
+            //Draw solid box in the middle
             if (_cell.HasNorthWall && _cell.HasSouthWall && _cell.HasEastWall && _cell.HasWestWall)
             {
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 32));
@@ -46,14 +55,25 @@ namespace ScalingSpoon.View.Bus
             if (_cell.HasWestWall)
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 3));
 
-            if (_cell.RobotID == 0)
-                e.Graphics.FillEllipse(new SolidBrush(Color.Red), 6, 6, 20, 20);
-            if (_cell.RobotID == 1)
-                e.Graphics.FillEllipse(new SolidBrush(Color.Blue), 6, 6, 20, 20);
-            if (_cell.RobotID == 2)
-                e.Graphics.FillEllipse(new SolidBrush(Color.Yellow), 6, 6, 20, 20);
-            if (_cell.RobotID == 3)
-                e.Graphics.FillEllipse(new SolidBrush(Color.Green), 6, 6, 20, 20);
+            if (_cell.RobotID != -1)
+                e.Graphics.FillEllipse(new SolidBrush(_robotColors[_cell.RobotID]), 6, 6, 20, 20);
+
+            DestinationCell dc = _cell as DestinationCell;
+            if (dc != null && dc.CurrentWinningCell)
+            {
+                //This is the same SalesPad Promotions star character i believe.
+                using (Font f = new Font("Tahoma", 16, FontStyle.Regular))
+                using (Brush b = new SolidBrush(_robotColors[dc.WinningRobotId]))
+                    e.Graphics.DrawString("★", f, b, 3, 3);
+            }
+        }
+
+        protected override bool IsInputKey(Keys keyData)
+        {
+            if (keyData == Keys.Right || keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left)
+                return true;
+            else
+                return base.IsInputKey(keyData);
         }
     }
 }

@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScalingSpoon.View.Bus;
 using ScalingSpoon.Model.Bus;
+using ScalingSpoon.Model.Enums;
+
 namespace ScalingSpoon.View
 {
     public partial class WindowsFormGame : Form
     {
+        private ScalingSpoon.Model.Engine _model;
+        private int focusedRobot = -1;
         public WindowsFormGame()
         {
             InitializeComponent();
@@ -20,25 +24,45 @@ namespace ScalingSpoon.View
 
         private void WindowsFormGame_Load(object sender, EventArgs e)
         {
-            ScalingSpoon.Model.Engine engine = new Model.Engine();
-            engine.ConstructBoard(16, 16, 16, 4);
-            foreach (Cell c in engine.Board)
-                this.Controls.Add(new ButtonCell(c));
+            _model = new Model.Engine();
+            _model.ConstructBoard(16, 16, 18, 4);
+            foreach (Cell c in _model.Board)
+            {
+                ButtonCell bc = new ButtonCell(c);
+                bc.Click += ButtonCell_Click;
+                bc.KeyDown += ButtonCell_KeyDown;
+                this.Controls.Add(bc);
+            }
+            this.Size = new Size(516, 548);
+        }
 
-            /*
-            this.Controls.Add(new ButtonCell(new Cell(0, true, false, false, false, 0, 0)));
-            this.Controls.Add(new ButtonCell(new Cell(1, false, true, false, false, 1, 0)));
-            this.Controls.Add(new ButtonCell(new Cell(2, false, false, true, false, 2, 0)));
-            this.Controls.Add(new ButtonCell(new Cell(3, false, false, false, true, 3, 0)));
-            this.Controls.Add(new ButtonCell(new Cell(4, true, true, false, false, 4, 1)));
-            this.Controls.Add(new ButtonCell(new Cell(5, false, true, true, false, 5, 2)));
-            this.Controls.Add(new ButtonCell(new Cell(6, false, false, true, true, 6, 3)));
-            this.Controls.Add(new ButtonCell(new Cell(7, true, false, false, true, 7, 4)));
+        private void ButtonCell_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            if (e.KeyCode == Keys.Up)
+                _model.MoveRobot(focusedRobot, Direction.Left);
+            if (e.KeyCode == Keys.Down)
+                _model.MoveRobot(focusedRobot, Direction.Right);
+            if (e.KeyCode == Keys.Right)
+                _model.MoveRobot(focusedRobot, Direction.Down);
+            if (e.KeyCode == Keys.Left)
+                _model.MoveRobot(focusedRobot, Direction.Up);
 
-            Cell c = new Cell(8, true, true, false, false, 10, 10);
-            c.RobotID = 0;
-            this.Controls.Add(new ButtonCell(c));
-            */
+            Refresh();
+        }
+
+        private void ButtonCell_Click(object sender, EventArgs e)
+        {
+            ButtonCell cell = sender as ButtonCell;
+            if (cell == null)
+                return;
+            if (cell.GetCell().RobotID != -1)
+                focusedRobot = cell.GetCell().RobotID;
+        }
+
+        private void WindowsFormGame_KeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

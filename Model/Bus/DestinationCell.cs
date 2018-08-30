@@ -11,6 +11,7 @@ namespace ScalingSpoon.Model.Bus
         public Dictionary<int, Cell> RobotFinalLocations { get; set; }
         public Stack<RobotMove> MoveHistory { get; set; }
         public Queue<RobotMove> PoppedHistory { get; set; }
+        public bool CurrentWinningCell { get; set; }
 
         public DestinationCell()
         {

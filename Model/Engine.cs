@@ -21,7 +21,7 @@ namespace ScalingSpoon.Model
         public Dictionary<int, Cell> RobotCurrentLocations { get; set; }
         public List<DestinationCell> WinningDestinations { get; set; }
         public DestinationCell CurrentWinningDestination { get; set; }
-        private int _robotID = 2;
+        private int _robotID = 0;
 
         public Engine()
         {
@@ -57,7 +57,7 @@ namespace ScalingSpoon.Model
             int xLength = this.Board.GetLength(0);
             int yLength = this.Board.GetLength(1);
 
-            for (int i = 0; i < robots; i ++)
+            for (int i = 0; i < robots; i++)
             {
                 int xLoc = rand.Next(xLength);
                 int yLoc = rand.Next(yLength);
@@ -76,7 +76,7 @@ namespace ScalingSpoon.Model
             {
                 for (int y = 1; y <= yLength - 2; y++)
                 {
-                    if ((x >= 6 && x <= 9) || (y >= 6 && y <= 9))
+                    if ((x >= 6 && x <= 9) && (y >= 6 && y <= 9))
                         continue;
 
                     possibleWinningDestinations.Add(this.Board[x, y]);
@@ -90,54 +90,54 @@ namespace ScalingSpoon.Model
             r = rand.Next(1, yLength / 2 - 2);
             c = this.Board[0, r];
             CreateCellWall(c, Direction.Right);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[0, r + 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[0, r + 1], false, ref possibleWinningDestinations);
 
 
             r = rand.Next(yLength / 2 + 1, yLength - 2);
             c = this.Board[0, r];
             CreateCellWall(c, Direction.Right);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[0, r + 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[0, r + 1], false, ref possibleWinningDestinations);
 
             //Bottom edges
             r = rand.Next(1, yLength / 2 - 2);
             c = this.Board[xLength - 1, r];
             CreateCellWall(c, Direction.Right);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[xLength - 1, r + 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[xLength - 1, r + 1], false, ref possibleWinningDestinations);
 
             r = rand.Next(yLength / 2 + 1, yLength - 2);
             c = this.Board[xLength - 1, r];
             CreateCellWall(c, Direction.Right);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[xLength - 1, r + 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[xLength - 1, r + 1], false, ref possibleWinningDestinations);
 
             //Left edges
             r = rand.Next(2, xLength / 2);
             c = this.Board[r, 0];
             CreateCellWall(c, Direction.Up);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[r - 1, 0], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[r - 1, 0], false, ref possibleWinningDestinations);
 
             r = rand.Next(xLength / 2 + 1, xLength - 2);
             c = this.Board[r, 0];
             CreateCellWall(c, Direction.Up);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[r - 1, 0], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[r - 1, 0], false, ref possibleWinningDestinations);
 
             //Right edges
             r = rand.Next(2, xLength / 2);
             c = this.Board[r, yLength - 1];
             CreateCellWall(c, Direction.Up);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[r - 1, yLength - 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[r - 1, yLength - 1], false, ref possibleWinningDestinations);
 
             r = rand.Next(xLength / 2 + 1, xLength - 2);
             c = this.Board[r, yLength - 1];
             CreateCellWall(c, Direction.Up);
-            RemoveCells(c, ref possibleWinningDestinations);
-            RemoveCells(this.Board[r - 1, yLength - 1], ref possibleWinningDestinations);
+            RemoveCells(c, false, ref possibleWinningDestinations);
+            RemoveCells(this.Board[r - 1, yLength - 1], false, ref possibleWinningDestinations);
 
             //Middle 2x2
             CreateCellWall(this.Board[7, 7], Direction.Up, Direction.Right, Direction.Left, Direction.Down);
@@ -148,7 +148,7 @@ namespace ScalingSpoon.Model
             for (int i = 0; i < destinations; i++)
             {
                 c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
-                RemoveCells(c, ref possibleWinningDestinations);
+                RemoveCells(c, true, ref possibleWinningDestinations);
                 DestinationCell dc = new DestinationCell(c);
                 this.Board[c.X, c.Y] = dc;
                 this.WinningDestinations.Add(dc);
@@ -170,6 +170,9 @@ namespace ScalingSpoon.Model
                 }
                 dc.WinningRobotId = rand.Next(_robotID);
             }
+
+            CurrentWinningDestination = WinningDestinations[0];
+            CurrentWinningDestination.CurrentWinningCell = true;
         }
 
         // Colors only work on the Console when its the actual Console output, not the Output window in visual studio.
@@ -234,13 +237,23 @@ namespace ScalingSpoon.Model
             }
         }
 
-        private void RemoveCells(Cell cellToRemove, ref List<Cell> cells)
+        private void RemoveCells(Cell cellToRemove, bool removeDiagonals, ref List<Cell> cells)
         {
             cells.Remove(cellToRemove);
+            //Remove adjacent cells
             cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X - 1 && c.Y == cellToRemove.Y));
             cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X + 1 && c.Y == cellToRemove.Y));
             cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X && c.Y == cellToRemove.Y - 1));
             cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X && c.Y == cellToRemove.Y + 1));
+
+            //Remove diagonal adjacent cells
+            if (removeDiagonals)
+            {
+                cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X + 1 && c.Y == cellToRemove.Y + 1));
+                cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X + 1 && c.Y == cellToRemove.Y - 1));
+                cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X - 1 && c.Y == cellToRemove.Y + 1));
+                cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X - 1 && c.Y == cellToRemove.Y - 1));
+            }
         }
 
         //Helper - Sets the current cells wall, and the adjacent cell.
@@ -315,6 +328,11 @@ namespace ScalingSpoon.Model
                         break;
                 }
             }
+
+            CurrentWinningDestination.CurrentWinningCell = false;
+            if (CurrentWinningDestination.RobotID == CurrentWinningDestination.WinningRobotId)
+                CurrentWinningDestination = WinningDestinations[WinningDestinations.IndexOf(CurrentWinningDestination) + 1 == WinningDestinations.Count ? 0 : WinningDestinations.IndexOf(CurrentWinningDestination) + 1];
+            CurrentWinningDestination.CurrentWinningCell = true; ;
         }
 
         private void MoveUp(int robot)
