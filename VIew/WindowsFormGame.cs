@@ -33,7 +33,7 @@ namespace ScalingSpoon.View
                 bc.KeyDown += ButtonCell_KeyDown;
                 this.Controls.Add(bc);
             }
-            this.Size = new Size(516, 548);
+            this.Size = new Size(530, 554);
         }
 
         private void ButtonCell_KeyDown(object sender, KeyEventArgs e)

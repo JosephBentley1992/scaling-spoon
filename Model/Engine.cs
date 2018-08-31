@@ -87,27 +87,27 @@ namespace ScalingSpoon.Model
             Cell c;
 
             //Top edges
-            r = rand.Next(1, yLength / 2 - 2);
+            r = rand.Next(1, yLength / 2 - 3);
             c = this.Board[0, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
             RemoveCells(this.Board[0, r + 1], false, ref possibleWinningDestinations);
 
 
-            r = rand.Next(yLength / 2 + 1, yLength - 2);
+            r = rand.Next(yLength / 2 + 2, yLength - 3);
             c = this.Board[0, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
             RemoveCells(this.Board[0, r + 1], false, ref possibleWinningDestinations);
 
             //Bottom edges
-            r = rand.Next(1, yLength / 2 - 2);
+            r = rand.Next(1, yLength / 2 - 3);
             c = this.Board[xLength - 1, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
             RemoveCells(this.Board[xLength - 1, r + 1], false, ref possibleWinningDestinations);
 
-            r = rand.Next(yLength / 2 + 1, yLength - 2);
+            r = rand.Next(yLength / 2 + 2, yLength - 3);
             c = this.Board[xLength - 1, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -120,7 +120,7 @@ namespace ScalingSpoon.Model
             RemoveCells(c, false, ref possibleWinningDestinations);
             RemoveCells(this.Board[r - 1, 0], false, ref possibleWinningDestinations);
 
-            r = rand.Next(xLength / 2 + 1, xLength - 2);
+            r = rand.Next(xLength / 2 + 2, xLength - 3);
             c = this.Board[r, 0];
             CreateCellWall(c, Direction.Up);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -133,7 +133,7 @@ namespace ScalingSpoon.Model
             RemoveCells(c, false, ref possibleWinningDestinations);
             RemoveCells(this.Board[r - 1, yLength - 1], false, ref possibleWinningDestinations);
 
-            r = rand.Next(xLength / 2 + 1, xLength - 2);
+            r = rand.Next(xLength / 2 + 2, xLength - 3);
             c = this.Board[r, yLength - 1];
             CreateCellWall(c, Direction.Up);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -148,10 +148,11 @@ namespace ScalingSpoon.Model
             for (int i = 0; i < destinations; i++)
             {
                 c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
-                RemoveCells(c, true, ref possibleWinningDestinations);
                 DestinationCell dc = new DestinationCell(c);
                 this.Board[c.X, c.Y] = dc;
                 this.WinningDestinations.Add(dc);
+
+                RemoveCells(c, true, ref possibleWinningDestinations);
                 r = rand.Next(4);
                 switch (r)
                 {
@@ -175,68 +176,6 @@ namespace ScalingSpoon.Model
             CurrentWinningDestination.CurrentWinningCell = true;
         }
 
-        // Colors only work on the Console when its the actual Console output, not the Output window in visual studio.
-        // I could finesse that a bit and actually move robots, but at this point i'd rather just write a controller + view.
-        public void WriteBoardToConsole()
-        {
-            for (int x = 0; x < this.Board.GetLength(0); x++)
-            {
-                for (int y = 0; y < this.Board.GetLength(1); y++)
-                {
-                    Cell c = this.Board[x, y];
-                    if (c.RobotID != -1)
-                    {
-                        switch (c.RobotID)
-                        {
-                            case 3:
-                                Console.BackgroundColor = ConsoleColor.DarkBlue;
-                                break;
-                            case 4:
-                                Console.BackgroundColor = ConsoleColor.DarkRed;
-                                break;
-                            case 5:
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                break;
-                            case 6:
-                                Console.BackgroundColor = ConsoleColor.DarkYellow;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Console.BackgroundColor = ConsoleColor.Black;
-                    }
-
-                    if (c.HasNorthWall && c.HasEastWall && c.HasSouthWall && c.HasWestWall)
-                        Console.Write("XX");
-                    else if (c.HasNorthWall && c.HasEastWall)
-                        Console.Write("00");
-                    else if (c.HasEastWall && c.HasSouthWall)
-                        Console.Write("01");
-                    else if (c.HasSouthWall && c.HasWestWall)
-                        Console.Write("10");
-                    else if (c.HasWestWall && c.HasNorthWall)
-                        Console.Write("11");
-                    else if (c.HasNorthWall)
-                        Console.Write("NN");
-                    else if (c.HasEastWall)
-                        Console.Write("EE");
-                    else if (c.HasSouthWall)
-                        Console.Write("SS");
-                    else if (c.HasWestWall)
-                        Console.Write("WW");
-                    else
-                    {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.Write("00");
-                    }
-
-                    Console.Write(" ");
-                }
-                Console.Write(Environment.NewLine);
-            }
-        }
-
         private void RemoveCells(Cell cellToRemove, bool removeDiagonals, ref List<Cell> cells)
         {
             cells.Remove(cellToRemove);
@@ -253,6 +192,25 @@ namespace ScalingSpoon.Model
                 cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X + 1 && c.Y == cellToRemove.Y - 1));
                 cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X - 1 && c.Y == cellToRemove.Y + 1));
                 cells.Remove(cells.FirstOrDefault(c => c.X == cellToRemove.X - 1 && c.Y == cellToRemove.Y - 1));
+            }
+
+            //Never have more than two winning cells in the same row or column.
+            if (WinningDestinations.Count(c => c.X == cellToRemove.X) == 2)
+            {
+                List<Cell> cellsInSameRowToRemove = new List<Cell>();
+                foreach (Cell cell in cells.Where(c => c.X == cellToRemove.X))
+                    cellsInSameRowToRemove.Add(cell);
+                foreach (Cell cell in cellsInSameRowToRemove)
+                    cells.Remove(cell);
+            }
+
+            if (WinningDestinations.Count(c => c.Y == cellToRemove.Y) == 2)
+            {
+                List<Cell> cellsInSameColumnToRemove = new List<Cell>();
+                foreach (Cell cell in cells.Where(c => c.Y == cellToRemove.Y))
+                    cellsInSameColumnToRemove.Add(cell);
+                foreach (Cell cell in cellsInSameColumnToRemove)
+                    cells.Remove(cell);
             }
         }
 
@@ -329,10 +287,12 @@ namespace ScalingSpoon.Model
                 }
             }
 
-            CurrentWinningDestination.CurrentWinningCell = false;
             if (CurrentWinningDestination.RobotID == CurrentWinningDestination.WinningRobotId)
+            {
+                CurrentWinningDestination.CurrentWinningCell = false;
                 CurrentWinningDestination = WinningDestinations[WinningDestinations.IndexOf(CurrentWinningDestination) + 1 == WinningDestinations.Count ? 0 : WinningDestinations.IndexOf(CurrentWinningDestination) + 1];
-            CurrentWinningDestination.CurrentWinningCell = true; ;
+                CurrentWinningDestination.CurrentWinningCell = true;
+            }
         }
 
         private void MoveUp(int robot)
