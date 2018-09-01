@@ -145,9 +145,34 @@ namespace ScalingSpoon.Model
             CreateCellWall(this.Board[8, 7], Direction.Up, Direction.Right, Direction.Left, Direction.Down);
             CreateCellWall(this.Board[8, 8], Direction.Up, Direction.Right, Direction.Left, Direction.Down);
 
+            List<int> availableRows = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+            List<int> availableCols = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
             for (int i = 0; i < destinations; i++)
             {
-                c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                if (availableRows.Count != 0 && availableCols.Count != 0)
+                {
+                    int x = availableRows[rand.Next(availableRows.Count)];
+                    int y = availableCols[rand.Next(availableCols.Count)];
+                    List<Cell> tempList = possibleWinningDestinations.Where(pwd => pwd.X == x || pwd.Y == y).ToList();
+                    if (tempList.Count == 0)
+                    {
+                        c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                    }
+                    else
+                    {
+                        c = tempList[rand.Next(tempList.Count)];
+                        if (c != null)
+                        {
+                            availableRows.Remove(x);
+                            availableCols.Remove(y);
+                        }
+                    }
+                }
+                else
+                {
+                    c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                }
+
                 DestinationCell dc = new DestinationCell(c);
                 this.Board[c.X, c.Y] = dc;
                 this.WinningDestinations.Add(dc);

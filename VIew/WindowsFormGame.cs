@@ -24,6 +24,23 @@ namespace ScalingSpoon.View
 
         private void WindowsFormGame_Load(object sender, EventArgs e)
         {
+            NewGame();
+        }
+
+        private void NewGame()
+        {
+            if (_model != null)
+            {
+                List< System.Windows.Forms.Control> controlsToRemove = new List<System.Windows.Forms.Control>();
+                foreach (System.Windows.Forms.Control c in this.Controls)
+                {
+                    if (c is ButtonCell)
+                        controlsToRemove.Add(c);
+                }
+                foreach (System.Windows.Forms.Control c in controlsToRemove)
+                    this.Controls.Remove(c);
+            }
+
             _model = new Model.Engine();
             _model.ConstructBoard(16, 16, 18, 4);
             foreach (Cell c in _model.Board)
@@ -33,7 +50,26 @@ namespace ScalingSpoon.View
                 bc.KeyDown += ButtonCell_KeyDown;
                 this.Controls.Add(bc);
             }
-            this.Size = new Size(530, 554);
+
+            StringBuilder sb = new StringBuilder();
+            int x1 = _model.WinningDestinations.GroupBy(c => c.X).Select(c => c.Count()).Count(c => c == 1);
+            int x2 = _model.WinningDestinations.GroupBy(c => c.X).Select(c => c.Count()).Count(c => c == 2);
+            int y1 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 1);
+            int y2 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 2);
+            int q1 = _model.WinningDestinations.Count(c => c.X > 1 && c.X < 8 && c.Y > 1 && c.Y < 8);
+            int q2 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y > 1 && c.Y < 8);
+            int q3 = _model.WinningDestinations.Count(c => c.X > 1 && c.X < 8 && c.Y >= 8 && c.Y < 15);
+            int q4 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y >= 8 && c.Y < 15);
+
+            sb.AppendLine(String.Format("Blank rows: {0}", 16 - x2 - x1 - 2));
+            sb.AppendLine(String.Format("2 rows: {0}", x2));
+            sb.AppendLine(String.Format("Blank cols: {0}", 16 - y2 - y1 - 2));
+            sb.AppendLine(String.Format("2 cols: {0}", y2));
+            sb.AppendLine(String.Format("Q1: {0}", q1));
+            sb.AppendLine(String.Format("Q2: {0}", q2));
+            sb.AppendLine(String.Format("Q3: {0}", q3));
+            sb.AppendLine(String.Format("Q4: {0}", q4));
+            txtGameDescription.Text = sb.ToString();
         }
 
         private void ButtonCell_KeyDown(object sender, KeyEventArgs e)
@@ -60,9 +96,10 @@ namespace ScalingSpoon.View
                 focusedRobot = cell.GetCell().RobotID;
         }
 
-        private void WindowsFormGame_KeyDown(object sender, KeyEventArgs e)
+        private void btnNewGame_Click(object sender, EventArgs e)
         {
-
+            NewGame();
+            Refresh();
         }
     }
 }
