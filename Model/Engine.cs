@@ -61,7 +61,7 @@ namespace ScalingSpoon.Model
             {
                 int xLoc = rand.Next(xLength);
                 int yLoc = rand.Next(yLength);
-                while(this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
+                while (this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
                     || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9)))
                 {
                     xLoc = rand.Next(xLength);
@@ -87,7 +87,7 @@ namespace ScalingSpoon.Model
             Cell c;
 
             //Top edges
-            r = rand.Next(1, yLength / 2 - 3);
+            r = rand.Next(2, yLength / 2 - 3);
             c = this.Board[0, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -101,7 +101,7 @@ namespace ScalingSpoon.Model
             RemoveCells(this.Board[0, r + 1], false, ref possibleWinningDestinations);
 
             //Bottom edges
-            r = rand.Next(1, yLength / 2 - 3);
+            r = rand.Next(2, yLength / 2 - 3);
             c = this.Board[xLength - 1, r];
             CreateCellWall(c, Direction.Right);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -114,7 +114,7 @@ namespace ScalingSpoon.Model
             RemoveCells(this.Board[xLength - 1, r + 1], false, ref possibleWinningDestinations);
 
             //Left edges
-            r = rand.Next(2, xLength / 2);
+            r = rand.Next(2, xLength / 2 - 3);
             c = this.Board[r, 0];
             CreateCellWall(c, Direction.Up);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -127,7 +127,7 @@ namespace ScalingSpoon.Model
             RemoveCells(this.Board[r - 1, 0], false, ref possibleWinningDestinations);
 
             //Right edges
-            r = rand.Next(2, xLength / 2);
+            r = rand.Next(2, xLength / 2 - 3);
             c = this.Board[r, yLength - 1];
             CreateCellWall(c, Direction.Up);
             RemoveCells(c, false, ref possibleWinningDestinations);
@@ -149,52 +149,110 @@ namespace ScalingSpoon.Model
             List<int> availableCols = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
             for (int i = 0; i < destinations; i++)
             {
-                if (availableRows.Count != 0 && availableCols.Count != 0)
+                bool destinationAssigned = false;
+                while (!destinationAssigned)
                 {
-                    int x = availableRows[rand.Next(availableRows.Count)];
-                    int y = availableCols[rand.Next(availableCols.Count)];
-                    List<Cell> tempList = possibleWinningDestinations.Where(pwd => pwd.X == x || pwd.Y == y).ToList();
-                    if (tempList.Count == 0)
+                    if (availableRows.Count != 0 && availableCols.Count != 0)
                     {
-                        c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                        int x = availableRows[rand.Next(availableRows.Count)];
+                        int y = availableCols[rand.Next(availableCols.Count)];
+                        List<Cell> tempList = possibleWinningDestinations.Where(pwd => pwd.X == x || pwd.Y == y).ToList();
+                        if (tempList.Count == 0)
+                        {
+                            c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                        }
+                        else
+                        {
+                            c = tempList[rand.Next(tempList.Count)];
+                            if (c != null)
+                            {
+                                availableRows.Remove(x);
+                                availableCols.Remove(y);
+                            }
+                        }
                     }
                     else
                     {
-                        c = tempList[rand.Next(tempList.Count)];
-                        if (c != null)
+                        c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+                    }
+
+                    DestinationCell dc = new DestinationCell(c);
+
+                    //Create L shaped wall, but not an L shape that causes the following 1 space gap with an edge wall.
+                    //   _  _
+                    //  |    |
+                    //  
+                    //  |_  _|
+                    //
+                    List<int> triedWalls = new List<int> { 0, 1, 2, 3 };
+
+                    //While (we have more walls to try) && (we haven't assigned walls to the destination)
+                    while (triedWalls.Count > 0 && (!(dc.HasNorthWall || dc.HasEastWall || dc.HasSouthWall || dc.HasWestWall)))
+                    {
+                        r = rand.Next(4);
+                        switch (r)
                         {
-                            availableRows.Remove(x);
-                            availableCols.Remove(y);
+                            case 0:
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasNorthWall || this.Board[dc.X, dc.Y - 2].HasNorthWall))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasEastWall || this.Board[dc.X - 2, dc.Y].HasEastWall)))
+                                {
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+
+                                CreateCellWall(dc, Direction.Up, Direction.Right);
+                                break;
+                            case 1:
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasEastWall || this.Board[dc.X - 2, dc.Y].HasEastWall)))
+                                {
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+
+                                CreateCellWall(dc, Direction.Right, Direction.Down);
+                                break;
+                            case 2:
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasWestWall || this.Board[dc.X - 2, dc.Y].HasWestWall)))
+                                {
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+
+                                CreateCellWall(dc, Direction.Down, Direction.Left);
+                                break;
+                            case 3:
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasNorthWall || this.Board[dc.X, dc.Y - 2].HasNorthWall))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasWestWall || this.Board[dc.X - 2, dc.Y].HasWestWall)))
+                                {
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+
+                                CreateCellWall(dc, Direction.Left, Direction.Up);
+                                break;
                         }
                     }
-                }
-                else
-                {
-                    c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
-                }
 
-                DestinationCell dc = new DestinationCell(c);
-                this.Board[c.X, c.Y] = dc;
-                this.WinningDestinations.Add(dc);
-
-                RemoveCells(c, true, ref possibleWinningDestinations);
-                r = rand.Next(4);
-                switch (r)
-                {
-                    case 0:
-                        CreateCellWall(dc, Direction.Up, Direction.Right);
-                        break;
-                    case 1:
-                        CreateCellWall(dc, Direction.Right, Direction.Down);
-                        break;
-                    case 2:
-                        CreateCellWall(dc, Direction.Down, Direction.Left);
-                        break;
-                    case 3:
-                        CreateCellWall(dc, Direction.Left, Direction.Up);
-                        break;
+                    //None of the 4 L walls work for this position. Remove it, and try another cell.
+                    if (!(dc.HasNorthWall || dc.HasEastWall || dc.HasSouthWall || dc.HasWestWall))
+                    {
+                        possibleWinningDestinations.Remove(dc);
+                    }
+                    else
+                    {
+                        this.Board[c.X, c.Y] = dc;
+                        this.WinningDestinations.Add(dc);
+                        dc.WinningRobotId = rand.Next(_robotID);
+                        RemoveCells(c, true, ref possibleWinningDestinations);
+                        destinationAssigned = true;
+                    }
                 }
-                dc.WinningRobotId = rand.Next(_robotID);
             }
 
             CurrentWinningDestination = WinningDestinations[0];

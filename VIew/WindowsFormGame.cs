@@ -56,9 +56,9 @@ namespace ScalingSpoon.View
             int x2 = _model.WinningDestinations.GroupBy(c => c.X).Select(c => c.Count()).Count(c => c == 2);
             int y1 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 1);
             int y2 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 2);
-            int q1 = _model.WinningDestinations.Count(c => c.X > 1 && c.X < 8 && c.Y > 1 && c.Y < 8);
-            int q2 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y > 1 && c.Y < 8);
-            int q3 = _model.WinningDestinations.Count(c => c.X > 1 && c.X < 8 && c.Y >= 8 && c.Y < 15);
+            int q1 = _model.WinningDestinations.Count(c => c.X > 0 && c.X < 8 && c.Y > 0 && c.Y < 8);
+            int q2 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y > 0 && c.Y < 8);
+            int q3 = _model.WinningDestinations.Count(c => c.X > 0 && c.X < 8 && c.Y >= 8 && c.Y < 15);
             int q4 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y >= 8 && c.Y < 15);
 
             sb.AppendLine(String.Format("Blank rows: {0}", 16 - x2 - x1 - 2));
