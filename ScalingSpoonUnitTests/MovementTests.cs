@@ -33,32 +33,28 @@ namespace ScalingSpoonTests
         public void RobotCollidesWithRightOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 2);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 2]);
         }
 
         [TestMethod]
         public void RobotCollidesWithBottomOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 2);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
         }
 
         [TestMethod]
         public void RobotCollidesWithLeftOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right,Direction.Down, Direction.Left);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 0]);
         }
 
         [TestMethod]
         public void RobotCollidesWithTopOfBoard()
         {
             _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Left, Direction.Up);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 0]);
         }
     }
 
@@ -96,32 +92,28 @@ namespace ScalingSpoonTests
         public void RobotCollidesWithWallMovingRight()
         {
             _model.MoveRobot(_robot.Id, Direction.Right);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 1);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 1]);
         }
 
         [TestMethod]
         public void RobotCollidesWithWallMovingLeft()
         {
             _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Right, Direction.Up, Direction.Left);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 2);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 2]);
         }
 
         [TestMethod]
         public void RobotCollidesWithWallMovingDown()
         {
             _model.MoveRobot(_robot.Id, Direction.Down);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 1);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[1, 0]);
         }
 
         [TestMethod]
         public void RobotCollidesWithWallMovingUp()
         {
             _model.MoveRobot(_robot.Id, Direction.Right, Direction.Down, Direction.Left, Direction.Up);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].X == 2);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robot.Id].Y == 0);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 0]);
         }
     }
 
@@ -156,30 +148,24 @@ namespace ScalingSpoonTests
         public void RobotsCollideMovingRight()
         {
             _model.MoveRobot(_robotRed.Id, Direction.Right);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 2);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].Y == 3);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotRed.Id], _model.Board[0, 2]);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotBlue.Id], _model.Board[0, 3]);
         }
 
         [TestMethod]
         public void RobotsCollideMovingLeft()
         {
             _model.MoveRobot(_robotBlue.Id, Direction.Left);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].Y == 1);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotRed.Id], _model.Board[0, 0]);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotBlue.Id], _model.Board[0, 1]);
         }
 
         [TestMethod]
         public void RobotsCollideMovingUp()
         {
             _model.MoveRobot(_robotRed.Id, Direction.Down, Direction.Right, Direction.Up);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 1);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 3);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].X == 0);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].Y == 3);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotRed.Id], _model.Board[1, 3]);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotBlue.Id], _model.Board[0, 3]);
         }
 
         [TestMethod]
@@ -187,10 +173,8 @@ namespace ScalingSpoonTests
         {
             _model.MoveRobot(_robotRed.Id, Direction.Down, Direction.Right);
             _model.MoveRobot(_robotBlue.Id, Direction.Down);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].X == 3);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotRed.Id].Y == 3);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].X == 2);
-            Assert.IsTrue(_model.RobotCurrentLocations[_robotBlue.Id].Y == 3);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotRed.Id], _model.Board[3, 3]);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robotBlue.Id], _model.Board[2, 3]);
         }
     }
 }
