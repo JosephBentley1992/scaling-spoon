@@ -31,12 +31,16 @@ namespace ScalingSpoonTests
             _robot = _model.CreateRobot(2, 1);
             DestinationCell dc = new DestinationCell(_model.Board[2, 2]);
             dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = true;
             _model.CurrentWinningDestination = dc;
+            _model.WinningDestinations.Add(dc);
+
+            dc = new DestinationCell(_model.Board[0, 0]);
+            dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = false;
             _model.WinningDestinations.Add(dc);
             List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2]) };
             List<RobotMove> moves = new GameSolver(_model).FindSolution();
-
-            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
 
             if (moves.Count < movesToWin.Count)
             {
@@ -69,7 +73,13 @@ namespace ScalingSpoonTests
             _robot = _model.CreateRobot(4, 4);
             DestinationCell dc = new DestinationCell(_model.Board[1, 3]);
             dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = true;
             _model.CurrentWinningDestination = dc;
+            _model.WinningDestinations.Add(dc);
+
+            dc = new DestinationCell(_model.Board[0, 0]);
+            dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = false;
             _model.WinningDestinations.Add(dc);
 
             _model.CreateCellWall(_model.Board[0, 1], Direction.Right);
@@ -89,8 +99,6 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3])};
             List<RobotMove> moves = new GameSolver(_model).FindSolution();
 
-            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
-
             if (moves.Count < movesToWin.Count)
             {
                 Assert.IsTrue(false);
@@ -104,6 +112,7 @@ namespace ScalingSpoonTests
         [TestMethod]
         public void MovingAnotherRobot_Once()
         {
+            System.Diagnostics.Debugger.Launch();
             //★
             /* a a|a _ a
              * _ b b *|b
@@ -124,7 +133,13 @@ namespace ScalingSpoonTests
 
             DestinationCell dc = new DestinationCell(_model.Board[1, 3]);
             dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = true;
             _model.CurrentWinningDestination = dc;
+            _model.WinningDestinations.Add(dc);
+
+            dc = new DestinationCell(_model.Board[0, 0]);
+            dc.WinningRobotId = _robot.Id;
+            dc.CurrentWinningCell = false;
             _model.WinningDestinations.Add(dc);
 
             _model.CreateCellWall(_model.Board[0, 1], Direction.Right);
@@ -138,8 +153,6 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
             new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
             List<RobotMove> moves = new GameSolver(_model).FindSolution();
-
-            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
 
             if (moves.Count < movesToWin.Count)
             {

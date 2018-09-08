@@ -2,7 +2,7 @@
 
 namespace ScalingSpoon.Model.Bus
 {
-    [DebuggerDisplay("({X},{Y}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
+    [DebuggerDisplay("({X},{Y},{RobotID}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
     public class Cell
     {
         public int Id { get; set; }

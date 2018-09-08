@@ -23,24 +23,49 @@ namespace ScalingSpoon.Model
 
         public List<RobotMove> FindSolution()
         {
-            _model.MoveRobot(0, Direction.Right);
-            return new List<RobotMove>() { new RobotMove(0, _model.Board[2, 1], _model.Board[2, 2]) };
+            NodeData nodeData = new NodeData(null, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
+            Node root = new Node(nodeData, 0, null);
+            _tree.Add(root);
+            _winningDestination = _model.CurrentWinningDestination;
+
+            Recursive(root);
+            Node winner = _winningNodes.OrderBy(n => n.Depth).FirstOrDefault();
+            if (winner == null)
+                return null;
+
+            //Traverse up the tree, adding the moves made to get to the winning position.
+            List<RobotMove> movesToWin = new List<RobotMove>();
+            while (winner.Previous != null)
+            {
+                movesToWin.Add(winner.Data.Move);
+                winner = winner.Previous;
+            }
+
+            //This list is backwards, so we need to reverse it.
+            movesToWin.Reverse();
+            return movesToWin;
+
+            //model.MoveRobot(0, Direction.Right);
+            //return new List<RobotMove>() { new RobotMove(0, _model.Board[2, 1], _model.Board[2, 2]) };
             //return new List<RobotMove>();
         }
 
         private void Recursive(Node prev)
         {
             //Don't attempt to find any paths that are longer than the fastest path discovered so far.
-            if (prev.Depth > _fastestWin)// || prev.Depth > 30)
+            if (_fastestWin != -1 && prev.Depth > _fastestWin)// || prev.Depth > 30)
                 return;
 
-            Direction prevDirection = prev.Data.Move.GetDirection();
+            Direction prevDirection = Direction.Up;
+            if (prev.Data.Move != null)
+                prevDirection = prev.Data.Move.GetDirection();
+
             for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
             {
                 foreach(Direction d in _allDirections)
                 {
                     //The same robot never needs to move in the same dimension consecutively.
-                    if (prev.Previous != null && prev.Data.Move.RobotId == i && 
+                    if (prev.Previous != null && prev.Data.Move != null && prev.Data.Move.RobotId == i && 
                         ((d == Direction.Up || d == Direction.Down) && (prevDirection == Direction.Up || prevDirection == Direction.Down)
                         || (d == Direction.Left || d == Direction.Right) && (prevDirection == Direction.Left || prevDirection == Direction.Right)))
                         continue;
@@ -52,7 +77,6 @@ namespace ScalingSpoon.Model
                     NodeData nodeData = new NodeData(move, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
                     Node next = new Node(nodeData, prev.Depth + 1, prev);
                     prev.Next.Add(next);
-                    _tree.Add(next);
 
                     //This move found a solution
                     if (_model.CurrentWinningDestination.X != _winningDestination.X && _model.CurrentWinningDestination.Y != _winningDestination.Y)
@@ -64,6 +88,9 @@ namespace ScalingSpoon.Model
                             _fastestWin = next.Depth;
 
                         _winningNodes.Add(next);
+                        _tree.Add(next);
+                        _model.UndoMove();
+                        return;
                     }
 
                     //Check for a repeating position in the tree. Repeated positions do not need to do any more recursive calls.
@@ -74,9 +101,11 @@ namespace ScalingSpoon.Model
                     {
                         if (repeatedNode.Depth > next.Depth)
                             SwapRepeatingNode(repeatedNode, next);
+                        _tree.Add(next);
                     }
                     else
                     {
+                        _tree.Add(next);
                         Recursive(next);
                     }
 
@@ -96,7 +125,31 @@ namespace ScalingSpoon.Model
 
         private void SwapRepeatingNode(Node repeatingNode, Node next)
         {
+            next.Next = repeatingNode.Next;
 
+            //uh... rename some variables...
+            foreach (Node n in next.Next)
+                n.Previous = next;
+
+            repeatingNode.Previous.Next.Remove(repeatingNode);
+            repeatingNode.Next = new List<Node>();
+            _tree.Remove(repeatingNode);
+
+            //Update depths, though.
+            RecursiveUpdateDepth(next, next.Depth);
+        }
+
+        private void RecursiveUpdateDepth(Node currentNode, int depth)
+        {
+            currentNode.Depth = depth;
+            if (_winningNodes.Contains(currentNode) && _fastestWin > currentNode.Depth)
+                _fastestWin = depth;
+
+            if (currentNode.Next == null)
+                return;
+
+            foreach (Node n in currentNode.Next)
+                RecursiveUpdateDepth(n, depth + 1);
         }
     }
 }

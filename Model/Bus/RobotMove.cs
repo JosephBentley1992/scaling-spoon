@@ -1,7 +1,9 @@
 ﻿using ScalingSpoon.Model.Enums;
+using System.Diagnostics;
 
 namespace ScalingSpoon.Model.Bus
 {
+    [DebuggerDisplay("{RobotId} ({StartingCell.X},{StartingCell.Y}) -> ({EndingCell.X},{EndingCell.Y})")]
     public class RobotMove
     {
         public int RobotId { get; set; }
