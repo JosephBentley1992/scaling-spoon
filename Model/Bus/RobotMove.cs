@@ -1,4 +1,6 @@
-﻿namespace ScalingSpoon.Model.Bus
+﻿using ScalingSpoon.Model.Enums;
+
+namespace ScalingSpoon.Model.Bus
 {
     public class RobotMove
     {
@@ -28,6 +30,18 @@
         public override int GetHashCode()
         {
             return this.StartingCell.X * this.StartingCell.Y * this.EndingCell.X * this.EndingCell.Y & base.GetHashCode();
+        }
+
+        public Direction GetDirection()
+        {
+            if (StartingCell.X < EndingCell.X)
+                return Direction.Down;
+            else if (StartingCell.X > EndingCell.X)
+                return Direction.Up;
+            else if (StartingCell.Y < EndingCell.Y)
+                return Direction.Right;
+            else
+                return Direction.Left;
         }
     }
 }
