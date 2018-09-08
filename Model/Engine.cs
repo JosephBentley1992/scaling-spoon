@@ -339,9 +339,12 @@ namespace ScalingSpoon.Model
 
         public Robot CreateRobot(int x, int y)
         {
-            //TODO: Can't create a robot on the same Cell
+            //TODO: 
+            //  Validation / Unit Tests:
+            //  Can't create a robot on the same Cell as another robot
             //  Can't create a robot out of bounds of Board
             //  Can't create a robot in a cell that is surrounded by walls (middle 2x2)
+            //  Can't create a robot after the game has started
             Robot r = new Robot(_robotID++);
             this.RobotInitialLocations.Add(r.Id, this.Board[x, y]);
             this.RobotCurrentLocations.Add(r.Id, this.Board[x, y]);
@@ -474,15 +477,5 @@ namespace ScalingSpoon.Model
         {
             //TODO: Figure out how to structure the difference between Undo'ing a move on the current puzzle, vs Undo'ing a historic puzzle.
         }
-
-        #region SolveTheGame o.O
-
-        public List<RobotMove> FindSolution()
-        {
-            MoveRobot(0, Direction.Right);
-            return new List<RobotMove>() { new RobotMove(0, this.Board[2, 1], this.Board[2, 2]) };
-            //return new List<RobotMove>();
-        }
-        #endregion SolveTheGame o.O
     }
 }

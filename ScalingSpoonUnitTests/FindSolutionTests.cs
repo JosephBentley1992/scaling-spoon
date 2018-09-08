@@ -34,7 +34,7 @@ namespace ScalingSpoonTests
             _model.CurrentWinningDestination = dc;
             _model.WinningDestinations.Add(dc);
             List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2]) };
-            List<RobotMove> moves = _model.FindSolution();
+            List<RobotMove> moves = new GameSolver(_model).FindSolution();
 
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
 
@@ -87,7 +87,7 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0]),
             new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0]),
             new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3])};
-            List<RobotMove> moves = _model.FindSolution();
+            List<RobotMove> moves = new GameSolver(_model).FindSolution();
 
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
 
@@ -137,7 +137,7 @@ namespace ScalingSpoonTests
             { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2]),
             new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
             new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
-            List<RobotMove> moves = _model.FindSolution();
+            List<RobotMove> moves = new GameSolver(_model).FindSolution();
 
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 2]);
 

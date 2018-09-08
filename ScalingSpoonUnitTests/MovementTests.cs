@@ -14,7 +14,7 @@ namespace ScalingSpoonTests
         [TestInitialize]
         public void Setup()
         {
-            /* a a a
+            /* R a a
              * b b b
              * c c c
              */

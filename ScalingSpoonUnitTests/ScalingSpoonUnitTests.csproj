@@ -52,6 +52,7 @@
     <Compile Include="FindSolutionTests.cs" />
     <Compile Include="MovementTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UndoMoveTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
