@@ -45,5 +45,10 @@ namespace ScalingSpoon.Model.Bus
             else
                 return Direction.Left;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}: {1} -> {2}", RobotId, StartingCell.ToString(), EndingCell.ToString());
+        }
     }
 }

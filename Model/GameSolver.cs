@@ -16,6 +16,7 @@ namespace ScalingSpoon.Model
         private int _fastestWin = -1;
         private DestinationCell _winningDestination;
         private List<Direction> _allDirections = new List<Direction> { Direction.Up, Direction.Down, Direction.Right, Direction.Left };
+        private List<int> _robotsByPriority = new List<int>();
         public GameSolver(Engine e)
         {
             _model = e;
@@ -27,6 +28,11 @@ namespace ScalingSpoon.Model
             Node root = new Node(nodeData, 0, null);
             _tree.Add(root);
             _winningDestination = _model.CurrentWinningDestination;
+
+            for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
+                _robotsByPriority.Add(i);
+
+            _robotsByPriority = _robotsByPriority.OrderBy(r => r == _model.CurrentWinningDestination.WinningRobotId ? 0 : 1).ToList();
 
             Recursive(root);
             Node winner = _winningNodes.OrderBy(n => n.Depth).FirstOrDefault();
@@ -53,14 +59,14 @@ namespace ScalingSpoon.Model
         private void Recursive(Node prev)
         {
             //Don't attempt to find any paths that are longer than the fastest path discovered so far.
-            if (_fastestWin != -1 && prev.Depth > _fastestWin)// || prev.Depth > 30)
+            if (_fastestWin != -1 && prev.Depth > _fastestWin || prev.Depth > 20)
                 return;
 
             Direction prevDirection = Direction.Up;
             if (prev.Data.Move != null)
                 prevDirection = prev.Data.Move.GetDirection();
 
-            for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
+            foreach (int i in _robotsByPriority)
             {
                 foreach(Direction d in _allDirections)
                 {

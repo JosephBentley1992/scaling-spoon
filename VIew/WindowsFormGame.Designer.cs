@@ -30,6 +30,7 @@
         {
             this.txtGameDescription = new System.Windows.Forms.TextBox();
             this.btnNewGame = new System.Windows.Forms.Button();
+            this.btnSolve = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtGameDescription
@@ -43,7 +44,7 @@
             // 
             // btnNewGame
             // 
-            this.btnNewGame.Location = new System.Drawing.Point(592, 24);
+            this.btnNewGame.Location = new System.Drawing.Point(528, 24);
             this.btnNewGame.Name = "btnNewGame";
             this.btnNewGame.Size = new System.Drawing.Size(75, 23);
             this.btnNewGame.TabIndex = 1;
@@ -51,11 +52,22 @@
             this.btnNewGame.UseVisualStyleBackColor = true;
             this.btnNewGame.Click += new System.EventHandler(this.btnNewGame_Click);
             // 
+            // btnSolve
+            // 
+            this.btnSolve.Location = new System.Drawing.Point(649, 24);
+            this.btnSolve.Name = "btnSolve";
+            this.btnSolve.Size = new System.Drawing.Size(75, 23);
+            this.btnSolve.TabIndex = 2;
+            this.btnSolve.Text = "Solve";
+            this.btnSolve.UseVisualStyleBackColor = true;
+            this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
+            // 
             // WindowsFormGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(736, 515);
+            this.Controls.Add(this.btnSolve);
             this.Controls.Add(this.btnNewGame);
             this.Controls.Add(this.txtGameDescription);
             this.Name = "WindowsFormGame";
@@ -70,5 +82,6 @@
 
         private System.Windows.Forms.TextBox txtGameDescription;
         private System.Windows.Forms.Button btnNewGame;
+        private System.Windows.Forms.Button btnSolve;
     }
 }

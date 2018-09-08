@@ -10,12 +10,13 @@ using System.Windows.Forms;
 using ScalingSpoon.View.Bus;
 using ScalingSpoon.Model.Bus;
 using ScalingSpoon.Model.Enums;
+using ScalingSpoon.Model;
 
 namespace ScalingSpoon.View
 {
     public partial class WindowsFormGame : Form
     {
-        private ScalingSpoon.Model.Engine _model;
+        private Engine _model;
         private int focusedRobot = -1;
         public WindowsFormGame()
         {
@@ -100,6 +101,15 @@ namespace ScalingSpoon.View
         {
             NewGame();
             Refresh();
+        }
+
+        private void btnSolve_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<RobotMove> movesToWin = new GameSolver(_model).FindSolution();
+            foreach (RobotMove move in movesToWin)
+                sb.AppendLine(move.ToString());
+            txtGameDescription.Text = sb.ToString();
         }
     }
 }
