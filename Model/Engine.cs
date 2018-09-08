@@ -400,6 +400,14 @@ namespace ScalingSpoon.Model
 
             initialLoc.RobotID = -1;
             currentLoc.RobotID = robot;
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == initialLoc.X && d.Y == initialLoc.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+
+            dc = this.WinningDestinations.FirstOrDefault(d => d.X == currentLoc.X && d.Y == currentLoc.Y);
+            if (dc != null)
+                dc.RobotID = robot;
+
             this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
             this.RobotCurrentLocations[robot] = currentLoc;
         }
@@ -423,6 +431,14 @@ namespace ScalingSpoon.Model
 
             initialLoc.RobotID = -1;
             currentLoc.RobotID = robot;
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == initialLoc.X && d.Y == initialLoc.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+
+            dc = this.WinningDestinations.FirstOrDefault(d => d.X == currentLoc.X && d.Y == currentLoc.Y);
+            if (dc != null)
+                dc.RobotID = robot;
+
             this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
             this.RobotCurrentLocations[robot] = currentLoc;
         }
@@ -446,6 +462,14 @@ namespace ScalingSpoon.Model
 
             initialLoc.RobotID = -1;
             currentLoc.RobotID = robot;
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == initialLoc.X && d.Y == initialLoc.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+
+            dc = this.WinningDestinations.FirstOrDefault(d => d.X == currentLoc.X && d.Y == currentLoc.Y);
+            if (dc != null)
+                dc.RobotID = robot;
+
             this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
             this.RobotCurrentLocations[robot] = currentLoc;
         }
@@ -469,13 +493,51 @@ namespace ScalingSpoon.Model
 
             initialLoc.RobotID = -1;
             currentLoc.RobotID = robot;
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == initialLoc.X && d.Y == initialLoc.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+
+            dc = this.WinningDestinations.FirstOrDefault(d => d.X == currentLoc.X && d.Y == currentLoc.Y);
+            if (dc != null)
+                dc.RobotID = robot;
+
             this.CurrentWinningDestination.MoveHistory.Push(new RobotMove(robot, initialLoc, currentLoc));
             this.RobotCurrentLocations[robot] = currentLoc;
         }
 
         public void UndoMove()
         {
-            //TODO: Figure out how to structure the difference between Undo'ing a move on the current puzzle, vs Undo'ing a historic puzzle.
+            int index = this.WinningDestinations.IndexOf(this.CurrentWinningDestination);
+
+            //Start of game, nothing to undo.
+            if (index == 0 && this.CurrentWinningDestination.MoveHistory.Count == 0)
+                return;
+
+            if (this.CurrentWinningDestination.MoveHistory.Count == 0)
+            {
+                this.CurrentWinningDestination.CurrentWinningCell = false;
+                this.CurrentWinningDestination = this.WinningDestinations[index - 1];
+                this.CurrentWinningDestination.CurrentWinningCell = true;
+            }
+
+            //Pop a move from the history
+            RobotMove move = this.CurrentWinningDestination.MoveHistory.Pop();
+            this.CurrentWinningDestination.PoppedHistory.Enqueue(move);
+
+            //Remove the robot from the ending point of the move.
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == move.EndingCell.X && d.Y == move.EndingCell.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+            move.EndingCell.RobotID = -1;
+
+            //Set the robot to the starting point of the move.
+            move.StartingCell.RobotID = move.RobotId;
+            dc = this.WinningDestinations.FirstOrDefault(d => d.X == move.StartingCell.X && d.Y == move.StartingCell.Y);
+            if (dc != null)
+                dc.RobotID = move.RobotId;
+
+            //Set the RobotCurrentLocation cell to the StartingCell reference.
+            this.RobotCurrentLocations[move.RobotId] = move.StartingCell;
         }
     }
 }
