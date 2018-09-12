@@ -11,12 +11,13 @@ namespace ScalingSpoon.Model
     public class GameSolver
     {
         private Engine _model = new Engine();
-        private List<Node> _tree = new List<Node>();
+        private Dictionary<int, Node> _tree = new Dictionary<int, Node>();
         private List<Node> _winningNodes = new List<Node>();
         private int _fastestWin = -1;
         private DestinationCell _winningDestination;
         private List<Direction> _allDirections = new List<Direction> { Direction.Up, Direction.Down, Direction.Right, Direction.Left };
         private List<int> _robotsByPriority = new List<int>();
+        private int _numberOfNodesEvaluated = 0;
         public GameSolver(Engine e)
         {
             _model = e;
@@ -26,7 +27,7 @@ namespace ScalingSpoon.Model
         {
             NodeData nodeData = new NodeData(null, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
             Node root = new Node(nodeData, 0, null);
-            _tree.Add(root);
+            _tree.Add(root.GetIndex(), root);
             _winningDestination = _model.CurrentWinningDestination;
 
             for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
@@ -49,11 +50,9 @@ namespace ScalingSpoon.Model
 
             //This list is backwards, so we need to reverse it.
             movesToWin.Reverse();
+            Console.WriteLine(String.Format("Number of nodes evaluated: {0}", _numberOfNodesEvaluated));
+            Console.WriteLine(String.Format("Number of Nodes: {0}", _tree.Count));
             return movesToWin;
-
-            //model.MoveRobot(0, Direction.Right);
-            //return new List<RobotMove>() { new RobotMove(0, _model.Board[2, 1], _model.Board[2, 2]) };
-            //return new List<RobotMove>();
         }
 
         private void Recursive(Node prev)
@@ -70,6 +69,8 @@ namespace ScalingSpoon.Model
             {
                 foreach(Direction d in _allDirections)
                 {
+                    _numberOfNodesEvaluated++;
+
                     //The same robot never needs to move in the same dimension consecutively.
                     if (prev.Previous != null && prev.Data.Move != null && prev.Data.Move.RobotId == i && 
                         ((d == Direction.Up || d == Direction.Down) && (prevDirection == Direction.Up || prevDirection == Direction.Down)
@@ -84,6 +85,26 @@ namespace ScalingSpoon.Model
                     Node next = new Node(nodeData, prev.Depth + 1, prev);
                     prev.Next.Add(next);
 
+                    //Check for a repeating position in the tree. Repeated positions do not need to do any more recursive calls.
+                    //If the current depth is quicker than the repeated positions depth, 
+                    // we should use this path to the position. Rebalance the tree + update depths.
+                    Node repeatedNode = null;
+                    bool shouldRecurse = false;
+                    if (_tree.ContainsKey(next.GetIndex()))
+                        repeatedNode = _tree[next.GetIndex()];
+
+                    if (repeatedNode != null)
+                    {
+                        if (repeatedNode.Depth > next.Depth)
+                            SwapRepeatingNode(repeatedNode, next);
+                    }
+                    else
+                    {
+                        //Eww refactor this
+                        shouldRecurse = true;
+                        _tree.Add(next.GetIndex(), next);
+                    }
+
                     //This move found a solution
                     if (_model.CurrentWinningDestination.X != _winningDestination.X && _model.CurrentWinningDestination.Y != _winningDestination.Y)
                     {
@@ -94,39 +115,16 @@ namespace ScalingSpoon.Model
                             _fastestWin = next.Depth;
 
                         _winningNodes.Add(next);
-                        _tree.Add(next);
                         _model.UndoMove();
                         return;
                     }
-
-                    //Check for a repeating position in the tree. Repeated positions do not need to do any more recursive calls.
-                    //If the current depth is quicker than the repeated positions depth, 
-                    // we should use this path to the position. Rebalance the tree + update depths.
-                    Node repeatedNode = _tree.FirstOrDefault(n => IsRepeatedPosition(n, next));
-                    if (repeatedNode != null)
-                    {
-                        if (repeatedNode.Depth > next.Depth)
-                            SwapRepeatingNode(repeatedNode, next);
-                        _tree.Add(next);
-                    }
-                    else
-                    {
-                        _tree.Add(next);
+                    if (shouldRecurse)
                         Recursive(next);
-                    }
 
                     //Before trying other paths from this node, Undo the current move.
                     _model.UndoMove();
                 }
             }
-        }
-
-        private bool IsRepeatedPosition(Node a, Node b)
-        {
-            for (int i = 0; i < a.Data.CurrentRobotLocations.Count; i++)
-                if (!a.Data.CurrentRobotLocations[i].Equals(b.Data.CurrentRobotLocations[i]))
-                    return false;
-            return true;
         }
 
         private void SwapRepeatingNode(Node repeatingNode, Node next)
@@ -139,7 +137,8 @@ namespace ScalingSpoon.Model
 
             repeatingNode.Previous.Next.Remove(repeatingNode);
             repeatingNode.Next = new List<Node>();
-            _tree.Remove(repeatingNode);
+            _tree.Remove(repeatingNode.GetIndex());
+            _tree.Add(next.GetIndex(), next);
 
             //Update depths, though.
             RecursiveUpdateDepth(next, next.Depth);
