@@ -58,7 +58,7 @@ namespace ScalingSpoon.Model
         private void Recursive(Node prev)
         {
             //Don't attempt to find any paths that are longer than the fastest path discovered so far.
-            if (_fastestWin != -1 && prev.Depth > _fastestWin || prev.Depth > 20)
+            if (_fastestWin != -1 && prev.Depth > _fastestWin || prev.Depth > 30)
                 return;
 
             Direction prevDirection = Direction.Up;
@@ -67,7 +67,7 @@ namespace ScalingSpoon.Model
 
             foreach (int i in _robotsByPriority)
             {
-                foreach(Direction d in _allDirections)
+                foreach (Direction d in _allDirections)
                 {
                     _numberOfNodesEvaluated++;
 
@@ -136,7 +136,10 @@ namespace ScalingSpoon.Model
                 n.Previous = next;
 
             repeatingNode.Previous.Next.Remove(repeatingNode);
-            repeatingNode.Next = new List<Node>();
+
+            //I think these two have the same reference, so doing the below loses a bunch of paths.
+            //Maybe a DeepCopy and then nulling this would work, but for now we'll just keep the reference.
+            //repeatingNode.Next = new List<Node>();
             _tree.Remove(repeatingNode.GetIndex());
             _tree.Add(next.GetIndex(), next);
 
