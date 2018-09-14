@@ -297,6 +297,18 @@ namespace ScalingSpoon.Model
             }
         }
 
+        public void CreateWinningDestination(int x, int y, int robotId, bool currentWinningCell, params Direction[] directions)
+        {
+            DestinationCell dc = new DestinationCell(this.Board[x, y]);
+            dc.WinningRobotId = robotId;
+            dc.CurrentWinningCell = currentWinningCell;
+            if (currentWinningCell)
+                this.CurrentWinningDestination = dc;
+
+            this.WinningDestinations.Add(dc);
+            this.CreateCellWall(this.Board[x, y], directions);
+        }
+
         //Helper - Sets the current cells wall, and the adjacent cell.
         public void CreateCellWall(Cell c, params Direction[] directions)
         {

@@ -153,22 +153,9 @@ namespace ScalingSpoonTests
             _robotRed = _model.CreateRobot(1, 1);
             _robotBlue = _model.CreateRobot(2, 2);
 
-            DestinationCell dc = new DestinationCell(_model.Board[2, 0]);
-            dc.WinningRobotId = _robotRed.Id;
-            dc.CurrentWinningCell = true;
-            _model.WinningDestinations.Add(dc);
-
-            dc = new DestinationCell(_model.Board[1, 2]);
-            dc.WinningRobotId = _robotBlue.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-
-            dc = new DestinationCell(_model.Board[0, 0]);
-            dc.WinningRobotId = _robotBlue.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-
-            _model.CurrentWinningDestination = _model.WinningDestinations[0];
+            _model.CreateWinningDestination(2, 0, _robotRed.Id, true);
+            _model.CreateWinningDestination(1, 2, _robotBlue.Id, false);
+            _model.CreateWinningDestination(0, 0, _robotRed.Id, false);
         }
 
         [TestMethod]

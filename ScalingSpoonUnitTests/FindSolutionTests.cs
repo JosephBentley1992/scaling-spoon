@@ -31,18 +31,12 @@ namespace ScalingSpoonTests
                     _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
 
             _robot = _model.CreateRobot(2, 1);
-            DestinationCell dc = new DestinationCell(_model.Board[2, 2]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = true;
-            _model.CurrentWinningDestination = dc;
-            _model.WinningDestinations.Add(dc);
 
-            dc = new DestinationCell(_model.Board[0, 0]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
+            _model.CreateWinningDestination(2, 2, _robot.Id, true);
+            _model.CreateWinningDestination(0, 0, _robot.Id, false);
             List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2]) };
-            List<RobotMove> moves = new GameSolver(_model).FindSolution();
+            GameSolver solver = new GameSolver(_model);
+            List<RobotMove> moves = solver.FindSolution();
 
             if (moves.Count < movesToWin.Count)
             {
@@ -73,20 +67,12 @@ namespace ScalingSpoonTests
                     _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
 
             _robot = _model.CreateRobot(4, 4);
-            DestinationCell dc = new DestinationCell(_model.Board[1, 3]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = true;
-            _model.CurrentWinningDestination = dc;
-            _model.WinningDestinations.Add(dc);
 
-            dc = new DestinationCell(_model.Board[0, 0]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
+            _model.CreateWinningDestination(1, 3, _robot.Id, true, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(0, 0, _robot.Id, false);
 
             _model.CreateCellWall(_model.Board[0, 1], Direction.Right);
             _model.CreateCellWall(_model.Board[1, 0], Direction.Down);
-            _model.CreateCellWall(_model.Board[1, 3], Direction.Up, Direction.Right);
             _model.CreateCellWall(_model.Board[2, 4], Direction.Down);
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
@@ -99,7 +85,8 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0]),
             new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0]),
             new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3])};
-            List<RobotMove> moves = new GameSolver(_model).FindSolution();
+            GameSolver solver = new GameSolver(_model);
+            List<RobotMove> moves = solver.FindSolution();
 
             if (moves.Count < movesToWin.Count)
             {
@@ -132,20 +119,11 @@ namespace ScalingSpoonTests
             _robot = _model.CreateRobot(4, 4);
             _robotBlue = _model.CreateRobot(2, 2);
 
-            DestinationCell dc = new DestinationCell(_model.Board[1, 3]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = true;
-            _model.CurrentWinningDestination = dc;
-            _model.WinningDestinations.Add(dc);
-
-            dc = new DestinationCell(_model.Board[0, 0]);
-            dc.WinningRobotId = _robot.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
+            _model.CreateWinningDestination(1, 3, _robot.Id, true, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(0, 0, _robot.Id, false);
 
             _model.CreateCellWall(_model.Board[0, 1], Direction.Right);
             _model.CreateCellWall(_model.Board[1, 0], Direction.Down);
-            _model.CreateCellWall(_model.Board[1, 3], Direction.Up, Direction.Right);
             _model.CreateCellWall(_model.Board[2, 4], Direction.Down);
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
@@ -153,7 +131,8 @@ namespace ScalingSpoonTests
             { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2]),
             new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
             new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
-            List<RobotMove> moves = new GameSolver(_model).FindSolution();
+            GameSolver solver = new GameSolver(_model);
+            List<RobotMove> moves = solver.FindSolution();
 
             if (moves.Count < movesToWin.Count)
             {
@@ -183,114 +162,24 @@ namespace ScalingSpoonTests
             _robotBlue = _model.CreateRobot(5, 15);
 
             //Destination Cells
-            DestinationCell dc = new DestinationCell(_model.Board[1, 14]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = true;
-            _model.CurrentWinningDestination = dc;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[1, 14], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[2, 1]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[2, 1], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[2, 11]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[2, 11], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[4, 9]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[4, 9], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[5, 4]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[5, 4], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[5, 6]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[5, 6], Direction.Left, Direction.Down);
-
-            dc = new DestinationCell(_model.Board[6, 10]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[6, 10], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[6, 13]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[6, 13], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[7, 4]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[7, 4], Direction.Right, Direction.Down);
-
-            dc = new DestinationCell(_model.Board[9, 13]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[9, 13], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[10, 5]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[10, 5], Direction.Up, Direction.Right);
-
-            dc = new DestinationCell(_model.Board[10, 11]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[10, 11], Direction.Up, Direction.Right);
-
-            dc = new DestinationCell(_model.Board[11, 7]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[11, 7], Direction.Down, Direction.Right);
-
-            dc = new DestinationCell(_model.Board[11, 9]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[11, 9], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[12, 5]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[12, 5], Direction.Left, Direction.Down);
-
-            dc = new DestinationCell(_model.Board[13, 2]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[13, 2], Direction.Left, Direction.Down);
-
-            dc = new DestinationCell(_model.Board[14, 6]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[14, 6], Direction.Left, Direction.Up);
-
-            dc = new DestinationCell(_model.Board[14, 14]);
-            dc.WinningRobotId = _robotGreen.Id;
-            dc.CurrentWinningCell = false;
-            _model.WinningDestinations.Add(dc);
-            _model.CreateCellWall(_model.Board[14, 14], Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(1, 14, _robotGreen.Id, true, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(2, 1, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(2, 11, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(4, 9, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(5, 4, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(5, 6, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(6, 10, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(6, 13, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(7, 4, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(9, 13, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(10, 5, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(10, 11, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(11, 7, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(11, 9, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(12, 5, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(13, 2, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(14, 6, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(14, 14, _robotGreen.Id, false, Direction.Right, Direction.Down);
 
             //Edges
             _model.CreateCellWall(_model.Board[0, 3], Direction.Right);
@@ -308,7 +197,6 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[8, 7], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
             _model.CreateCellWall(_model.Board[8, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
 
-
             List<RobotMove> movesToWin = new List<RobotMove>()
             { new RobotMove(_robot.Id, _model.Board[4, 2], _model.Board[0, 2]),
             new RobotMove(_robotGreen.Id, _model.Board[10, 2], _model.Board[1, 2]),
@@ -316,7 +204,9 @@ namespace ScalingSpoonTests
             new RobotMove(_robotGreen.Id, _model.Board[1, 13], _model.Board[5, 13]),
             new RobotMove(_robotGreen.Id, _model.Board[5, 13], _model.Board[5, 14]),
             new RobotMove(_robotGreen.Id, _model.Board[5, 14], _model.Board[1, 14]) };
-            List<RobotMove> moves = new GameSolver(_model).FindSolution();
+            GameSolver solver = new GameSolver(_model);
+            List<RobotMove> moves = solver.FindSolution();
+
             System.Diagnostics.Debugger.Launch();
             if (moves.Count < movesToWin.Count)
             {

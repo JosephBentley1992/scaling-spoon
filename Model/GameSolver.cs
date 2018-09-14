@@ -72,10 +72,11 @@ namespace ScalingSpoon.Model
                     _numberOfNodesEvaluated++;
 
                     //The same robot never needs to move in the same dimension consecutively.
-                    if (prev.Previous != null && prev.Data.Move != null && prev.Data.Move.RobotId == i && 
-                        ((d == Direction.Up || d == Direction.Down) && (prevDirection == Direction.Up || prevDirection == Direction.Down)
-                        || (d == Direction.Left || d == Direction.Right) && (prevDirection == Direction.Left || prevDirection == Direction.Right)))
-                        continue;
+                    //But because im swapping tree nodes... my prev.Data.Move is changing, which is causing the recursive calls to not follow a line it would otherwise be following.
+                    //if (prev.Previous != null && prev.Data.Move != null && prev.Data.Move.RobotId == i && 
+                    //    ((d == Direction.Up || d == Direction.Down) && (prevDirection == Direction.Up || prevDirection == Direction.Down)
+                    //    || (d == Direction.Left || d == Direction.Right) && (prevDirection == Direction.Left || prevDirection == Direction.Right)))
+                    //    continue;
 
                     RobotMove move = _model.MoveRobot(i, d).FirstOrDefault();
                     if (move == null)
