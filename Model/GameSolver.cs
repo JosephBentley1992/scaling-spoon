@@ -58,7 +58,7 @@ namespace ScalingSpoon.Model
         private void Recursive(Node prev)
         {
             //Don't attempt to find any paths that are longer than the fastest path discovered so far.
-            if (_fastestWin != -1 && prev.Depth > _fastestWin || prev.Depth > 30)
+            if (_fastestWin != -1 && prev.Depth >= _fastestWin || prev.Depth > 30)
                 return;
 
             Direction prevDirection = Direction.Up;
@@ -118,6 +118,7 @@ namespace ScalingSpoon.Model
                         _model.UndoMove();
                         return;
                     }
+
                     if (shouldRecurse)
                         Recursive(next);
 
@@ -127,24 +128,21 @@ namespace ScalingSpoon.Model
             }
         }
 
-        private void SwapRepeatingNode(Node repeatingNode, Node next)
+        private void SwapRepeatingNode(Node slowerNode, Node fasterNode)
         {
-            next.Next = repeatingNode.Next;
+            fasterNode.Next = slowerNode.Next;
 
-            //uh... rename some variables...
-            foreach (Node n in next.Next)
-                n.Previous = next;
-
-            repeatingNode.Previous.Next.Remove(repeatingNode);
+            foreach (Node n in fasterNode.Next)
+                n.Previous = fasterNode;
 
             //I think these two have the same reference, so doing the below loses a bunch of paths.
             //Maybe a DeepCopy and then nulling this would work, but for now we'll just keep the reference.
             //repeatingNode.Next = new List<Node>();
-            _tree.Remove(repeatingNode.GetIndex());
-            _tree.Add(next.GetIndex(), next);
+            _tree.Remove(slowerNode.GetIndex());
+            _tree.Add(fasterNode.GetIndex(), fasterNode);
 
             //Update depths, though.
-            RecursiveUpdateDepth(next, next.Depth);
+            RecursiveUpdateDepth(fasterNode, fasterNode.Depth);
         }
 
         private void RecursiveUpdateDepth(Node currentNode, int depth)

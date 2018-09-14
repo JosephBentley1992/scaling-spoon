@@ -10,7 +10,7 @@ namespace ScalingSpoon.Model.Bus
         public Dictionary<int, Cell> RobotInitialLocations { get; set; }
         public Dictionary<int, Cell> RobotFinalLocations { get; set; }
         public Stack<RobotMove> MoveHistory { get; set; }
-        public Queue<RobotMove> PoppedHistory { get; set; }
+        public Stack<RobotMove> PoppedHistory { get; set; }
         public bool CurrentWinningCell { get; set; }
 
         public DestinationCell()
@@ -18,7 +18,7 @@ namespace ScalingSpoon.Model.Bus
             this.RobotInitialLocations = new Dictionary<int, Cell>();
             this.RobotFinalLocations = new Dictionary<int, Cell>();
             this.MoveHistory = new Stack<RobotMove>();
-            this.PoppedHistory = new Queue<RobotMove>();
+            this.PoppedHistory = new Stack<RobotMove>();
         }
 
         public DestinationCell(int id)
@@ -45,7 +45,7 @@ namespace ScalingSpoon.Model.Bus
             this.RobotInitialLocations = new Dictionary<int, Cell>();
             this.RobotFinalLocations = new Dictionary<int, Cell>();
             this.MoveHistory = new Stack<RobotMove>();
-            this.PoppedHistory = new Queue<RobotMove>();
+            this.PoppedHistory = new Stack<RobotMove>();
         }
 
         public int NumberOfMoves()
