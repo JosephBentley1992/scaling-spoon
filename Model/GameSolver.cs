@@ -71,13 +71,6 @@ namespace ScalingSpoon.Model
                 {
                     _numberOfNodesEvaluated++;
 
-                    //The same robot never needs to move in the same dimension consecutively.
-                    //But because im swapping tree nodes... my prev.Data.Move is changing, which is causing the recursive calls to not follow a line it would otherwise be following.
-                    //if (prev.Previous != null && prev.Data.Move != null && prev.Data.Move.RobotId == i && 
-                    //    ((d == Direction.Up || d == Direction.Down) && (prevDirection == Direction.Up || prevDirection == Direction.Down)
-                    //    || (d == Direction.Left || d == Direction.Right) && (prevDirection == Direction.Left || prevDirection == Direction.Right)))
-                    //    continue;
-
                     RobotMove move = _model.MoveRobot(i, d).FirstOrDefault();
                     if (move == null)
                         continue; //an Invalid move not worth saving
@@ -101,7 +94,7 @@ namespace ScalingSpoon.Model
                     }
                     else
                     {
-                        //Eww refactor this
+                        //Eww refactor this 
                         shouldRecurse = true;
                         _tree.Add(next.GetIndex(), next);
                     }
@@ -132,17 +125,11 @@ namespace ScalingSpoon.Model
         private void SwapRepeatingNode(Node slowerNode, Node fasterNode)
         {
             fasterNode.Next = slowerNode.Next;
-
             foreach (Node n in fasterNode.Next)
                 n.Previous = fasterNode;
 
-            //I think these two have the same reference, so doing the below loses a bunch of paths.
-            //Maybe a DeepCopy and then nulling this would work, but for now we'll just keep the reference.
-            //repeatingNode.Next = new List<Node>();
             _tree.Remove(slowerNode.GetIndex());
             _tree.Add(fasterNode.GetIndex(), fasterNode);
-
-            //Update depths, though.
             RecursiveUpdateDepth(fasterNode, fasterNode.Depth);
         }
 
