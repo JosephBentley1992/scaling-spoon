@@ -106,7 +106,7 @@ namespace ScalingSpoon.View
         private void btnSolve_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-            List<RobotMove> movesToWin = new GameSolver(_model).FindSolution();
+            List<RobotMove> movesToWin = new GameSolverBreadthFirst(_model).FindSolution();
             foreach (RobotMove move in movesToWin)
                 sb.AppendLine(move.ToString());
             txtGameDescription.Text = sb.ToString();

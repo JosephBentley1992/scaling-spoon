@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ScalingSpoon.Model
 {
-    public class GameSolver
+    public class GameSolverDepthFirst
     {
         private Engine _model = new Engine();
         private Dictionary<int, Node> _tree = new Dictionary<int, Node>();
@@ -18,7 +18,7 @@ namespace ScalingSpoon.Model
         private List<Direction> _allDirections = new List<Direction> { Direction.Up, Direction.Down, Direction.Right, Direction.Left };
         private List<int> _robotsByPriority = new List<int>();
         private int _numberOfNodesEvaluated = 0;
-        public GameSolver(Engine e)
+        public GameSolverDepthFirst(Engine e)
         {
             _model = e;
         }
