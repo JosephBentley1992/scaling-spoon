@@ -445,19 +445,11 @@ namespace ScalingSpoon.Model
                         break;
                 }
 
-                initialLoc.RobotID = -1;
-                currentLoc.RobotID = robot;
-                DestinationCell dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == initialLoc.X && wd.Y == initialLoc.Y);
-                if (dc != null)
-                    dc.RobotID = -1;
-
-                dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == currentLoc.X && wd.Y == currentLoc.Y);
-                if (dc != null)
-                    dc.RobotID = robot;
+                //Update the Robot position
+                this.UpdateRobotPosition(robot, initialLoc, currentLoc);
 
                 move = new RobotMove(robot, initialLoc, currentLoc);
                 this.CurrentWinningDestination.MoveHistory.Push(move);
-                this.RobotCurrentLocations[robot] = currentLoc;
 
                 if (move != null)
                     moves.Add(move);
@@ -491,20 +483,8 @@ namespace ScalingSpoon.Model
             RobotMove move = this.CurrentWinningDestination.MoveHistory.Pop();
             this.CurrentWinningDestination.PoppedHistory.Push(move);
 
-            //Remove the robot from the ending point of the move.
-            DestinationCell dc = this.WinningDestinations.FirstOrDefault(d => d.X == move.EndingCell.X && d.Y == move.EndingCell.Y);
-            if (dc != null)
-                dc.RobotID = -1;
-            move.EndingCell.RobotID = -1;
-
-            //Set the robot to the starting point of the move.
-            move.StartingCell.RobotID = move.RobotId;
-            dc = this.WinningDestinations.FirstOrDefault(d => d.X == move.StartingCell.X && d.Y == move.StartingCell.Y);
-            if (dc != null)
-                dc.RobotID = move.RobotId;
-
-            //Set the RobotCurrentLocation cell to the StartingCell reference.
-            this.RobotCurrentLocations[move.RobotId] = move.StartingCell;
+            //Update the Robot position
+            this.UpdateRobotPosition(move.RobotId, move.EndingCell, move.StartingCell);
         }
 
         public void RedoMove()
@@ -536,6 +516,21 @@ namespace ScalingSpoon.Model
             //
             ////Set the RobotCurrentLocation cell to the StartingCell reference.
             //this.RobotCurrentLocations[move.RobotId] = move.StartingCell;
+        }
+
+        public void UpdateRobotPosition(int robotId, Cell initialLoc, Cell newLoc)
+        {
+            initialLoc.RobotID = -1;
+            newLoc.RobotID = robotId;
+            DestinationCell dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == initialLoc.X && wd.Y == initialLoc.Y);
+            if (dc != null)
+                dc.RobotID = -1;
+
+            dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == newLoc.X && wd.Y == newLoc.Y);
+            if (dc != null)
+                dc.RobotID = robotId;
+
+            this.RobotCurrentLocations[robotId] = newLoc;
         }
     }
 }

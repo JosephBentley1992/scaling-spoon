@@ -19,7 +19,7 @@ namespace ScalingSpoon.Model
         private int _numberOfNodesEvaluated = 0;
         public GameSolverBreadthFirst(Engine e)
         {
-            _model = e;
+            _model = e.Copy();
         }
 
         public List<RobotMove> FindSolution()
@@ -33,7 +33,7 @@ namespace ScalingSpoon.Model
                 _robotsByPriority.Add(i);
 
             _robotsByPriority = _robotsByPriority.OrderBy(r => r == _model.CurrentWinningDestination.WinningRobotId ? 0 : 1).ToList();
-
+            
             Recursive(0);
             if (_winningNode == null)
                 return new List<RobotMove>();
@@ -49,6 +49,7 @@ namespace ScalingSpoon.Model
 
             //This list is backwards, so we need to reverse it.
             movesToWin.Reverse();
+
             Console.WriteLine(String.Format("Number of nodes evaluated: {0}", _numberOfNodesEvaluated));
             Console.WriteLine(String.Format("Number of Nodes: {0}", _tree.Count));
             return movesToWin;
@@ -103,21 +104,8 @@ namespace ScalingSpoon.Model
 
         private void SetRobotCurrentLocations(Node n)
         {
-            //Undo all moves, and then redo the moves to get to this point in the tree.
-            //TODO refactor this to just allow setting a board state, probably.
-            for (int i = 0; i < n.Depth; i++)
-                _model.UndoMove();
-
-            List<RobotMove> movesToReachNode = new List<RobotMove>();
-            while (n.Previous != null)
-            {
-                movesToReachNode.Add(n.Data.Move);
-                n = n.Previous;
-            }
-
-            movesToReachNode.Reverse();
-            foreach (RobotMove move in movesToReachNode)
-                _model.MoveRobot(move.RobotId, move.GetDirection());
+            for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
+                _model.UpdateRobotPosition(i, _model.RobotCurrentLocations[i], n.Data.CurrentRobotLocations[i]);
         }
     }
 }
