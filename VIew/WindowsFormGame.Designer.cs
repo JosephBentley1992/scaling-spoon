@@ -28,19 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtGameDescription = new System.Windows.Forms.TextBox();
             this.btnNewGame = new System.Windows.Forms.Button();
             this.btnSolve = new System.Windows.Forms.Button();
+            this.txtSolutionPath = new System.Windows.Forms.RichTextBox();
+            this.boardLocation = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtNumberOfMoves = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // txtGameDescription
-            // 
-            this.txtGameDescription.Location = new System.Drawing.Point(528, 53);
-            this.txtGameDescription.MinimumSize = new System.Drawing.Size(100, 450);
-            this.txtGameDescription.Multiline = true;
-            this.txtGameDescription.Name = "txtGameDescription";
-            this.txtGameDescription.Size = new System.Drawing.Size(196, 457);
-            this.txtGameDescription.TabIndex = 0;
             // 
             // btnNewGame
             // 
@@ -54,7 +47,7 @@
             // 
             // btnSolve
             // 
-            this.btnSolve.Location = new System.Drawing.Point(649, 24);
+            this.btnSolve.Location = new System.Drawing.Point(674, 24);
             this.btnSolve.Name = "btnSolve";
             this.btnSolve.Size = new System.Drawing.Size(75, 23);
             this.btnSolve.TabIndex = 2;
@@ -62,14 +55,40 @@
             this.btnSolve.UseVisualStyleBackColor = true;
             this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
             // 
+            // txtSolutionPath
+            // 
+            this.txtSolutionPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSolutionPath.Location = new System.Drawing.Point(528, 53);
+            this.txtSolutionPath.Name = "txtSolutionPath";
+            this.txtSolutionPath.Size = new System.Drawing.Size(221, 457);
+            this.txtSolutionPath.TabIndex = 4;
+            this.txtSolutionPath.Text = "";
+            // 
+            // boardLocation
+            // 
+            this.boardLocation.Location = new System.Drawing.Point(2, 1);
+            this.boardLocation.Name = "boardLocation";
+            this.boardLocation.Size = new System.Drawing.Size(520, 509);
+            this.boardLocation.TabIndex = 5;
+            this.boardLocation.Visible = false;
+            // 
+            // txtNumberOfMoves
+            // 
+            this.txtNumberOfMoves.Location = new System.Drawing.Point(609, 27);
+            this.txtNumberOfMoves.Name = "txtNumberOfMoves";
+            this.txtNumberOfMoves.Size = new System.Drawing.Size(58, 20);
+            this.txtNumberOfMoves.TabIndex = 6;
+            // 
             // WindowsFormGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(736, 515);
+            this.ClientSize = new System.Drawing.Size(761, 515);
+            this.Controls.Add(this.txtNumberOfMoves);
+            this.Controls.Add(this.txtSolutionPath);
             this.Controls.Add(this.btnSolve);
             this.Controls.Add(this.btnNewGame);
-            this.Controls.Add(this.txtGameDescription);
+            this.Controls.Add(this.boardLocation);
             this.Name = "WindowsFormGame";
             this.Text = "WindowsFormGame";
             this.Load += new System.EventHandler(this.WindowsFormGame_Load);
@@ -79,9 +98,10 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox txtGameDescription;
         private System.Windows.Forms.Button btnNewGame;
         private System.Windows.Forms.Button btnSolve;
+        private System.Windows.Forms.RichTextBox txtSolutionPath;
+        private System.Windows.Forms.FlowLayoutPanel boardLocation;
+        private System.Windows.Forms.TextBox txtNumberOfMoves;
     }
 }

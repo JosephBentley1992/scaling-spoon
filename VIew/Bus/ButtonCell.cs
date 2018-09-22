@@ -27,7 +27,7 @@ namespace ScalingSpoon.View.Bus
             this.Location = new Point(c.X * 32, c.Y * 32);
             _robotColors.Add(0, Color.Red);
             _robotColors.Add(1, Color.Green);
-            _robotColors.Add(2, Color.Yellow);
+            _robotColors.Add(2, Color.Purple);
             _robotColors.Add(3, Color.Blue);
         }
 

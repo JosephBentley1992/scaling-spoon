@@ -18,9 +18,15 @@ namespace ScalingSpoon.View
     {
         private Engine _model;
         private int focusedRobot = -1;
+        private Dictionary<int, Color> _robotColors = new Dictionary<int, Color>();
+
         public WindowsFormGame()
         {
             InitializeComponent();
+            _robotColors.Add(0, Color.Red);
+            _robotColors.Add(1, Color.Green);
+            _robotColors.Add(2, Color.Purple);
+            _robotColors.Add(3, Color.Blue);
         }
 
         private void WindowsFormGame_Load(object sender, EventArgs e)
@@ -70,7 +76,9 @@ namespace ScalingSpoon.View
             sb.AppendLine(String.Format("Q2: {0}", q2));
             sb.AppendLine(String.Format("Q3: {0}", q3));
             sb.AppendLine(String.Format("Q4: {0}", q4));
-            txtGameDescription.Text = sb.ToString();
+
+            txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)8.75);
+            txtSolutionPath.Text = sb.ToString();
         }
 
         private void ButtonCell_KeyDown(object sender, KeyEventArgs e)
@@ -105,11 +113,28 @@ namespace ScalingSpoon.View
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
+            txtSolutionPath.Clear();
+            txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)42.0);
             List<RobotMove> movesToWin = new GameSolverBreadthFirst(_model).FindSolution();
+            if (movesToWin == null || movesToWin.Count == 0)
+            {
+                txtNumberOfMoves.Text = ">12";
+                movesToWin = new GameSolverDepthFirst(_model).FindSolution();
+                if (movesToWin == null || movesToWin.Count == 0)
+                    txtNumberOfMoves.Text = "???";
+            }
+            txtNumberOfMoves.Text = movesToWin.Count.ToString();
             foreach (RobotMove move in movesToWin)
-                sb.AppendLine(move.ToString());
-            txtGameDescription.Text = sb.ToString();
+            {
+                if (move.GetDirection() == Direction.Up)
+                    txtSolutionPath.AppendText("⇦", _robotColors[move.RobotId]);
+                if (move.GetDirection() == Direction.Down)
+                    txtSolutionPath.AppendText("⇨", _robotColors[move.RobotId]);
+                if (move.GetDirection() == Direction.Right)
+                    txtSolutionPath.AppendText("⇩", _robotColors[move.RobotId]);
+                if (move.GetDirection() == Direction.Left)
+                    txtSolutionPath.AppendText("⇧", _robotColors[move.RobotId]);
+            }
         }
     }
 }

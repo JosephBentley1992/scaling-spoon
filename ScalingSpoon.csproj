@@ -67,6 +67,7 @@
     <Compile Include="View\Bus\ButtonCell.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="View\Bus\RichTextBoxExtensions.cs" />
     <Compile Include="View\WindowsFormGame.cs">
       <SubType>Form</SubType>
     </Compile>

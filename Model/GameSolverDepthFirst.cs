@@ -20,7 +20,7 @@ namespace ScalingSpoon.Model
         private int _numberOfNodesEvaluated = 0;
         public GameSolverDepthFirst(Engine e)
         {
-            _model = e;
+            _model = e.Copy();
         }
 
         public List<RobotMove> FindSolution()

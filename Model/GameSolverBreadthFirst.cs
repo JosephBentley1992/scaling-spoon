@@ -98,7 +98,7 @@ namespace ScalingSpoon.Model
                 return;
 
             _tree = _tree.Concat(nodesToAdd).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            if (_winningNode == null)
+            if (_winningNode == null && depth < 12) //depths >13 will not be explored by BreadthFirst.
                 Recursive(depth + 1);
         }
 
