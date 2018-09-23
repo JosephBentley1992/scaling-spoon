@@ -421,7 +421,78 @@ namespace ScalingSpoonTests
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
-            //System.Diagnostics.Debugger.Launch();
+            if (moves.Count < movesToWin.Count)
+            {
+                Assert.IsTrue(false);
+                return;
+            }
+
+            for (int i = 0; i < movesToWin.Count; i++)
+                Assert.AreEqual(movesToWin[i], moves[i]);
+        }
+
+        [TestMethod]
+        public void MovingThreeRobots_16x16Board()
+        {
+            //Board: MovingThreeRobots_16x16.png
+            _model = new Engine();
+            _model.Board = new Cell[16, 16];
+
+            int id = 0;
+            for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
+                for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
+                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+
+            _robot = _model.CreateRobot(13, 1);
+            _robotGreen = _model.CreateRobot(12, 2);
+            _robotYellow = _model.CreateRobot(4, 2);
+            _robotBlue = _model.CreateRobot(14, 2);
+
+            //Destination Cells
+            _model.CreateWinningDestination(1, 9, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(2, 3, _robotBlue.Id, true, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(2, 13, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(3, 9, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(4, 4, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(4, 11, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(6, 3, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(6, 14, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(8, 12, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(9, 1, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(9, 14, _robotGreen.Id, false, Direction.Left, Direction.Up);
+            _model.CreateWinningDestination(10, 11, _robotGreen.Id, false, Direction.Down, Direction.Right);
+            _model.CreateWinningDestination(11, 4, _robotGreen.Id, false, Direction.Up, Direction.Right);
+            _model.CreateWinningDestination(11, 6, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(12, 10, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(13, 13, _robotGreen.Id, false, Direction.Right, Direction.Down);
+            _model.CreateWinningDestination(14, 2, _robotGreen.Id, false, Direction.Left, Direction.Down);
+            _model.CreateWinningDestination(14, 8, _robotGreen.Id, false, Direction.Up, Direction.Right);
+
+            //Edges
+            _model.CreateCellWall(_model.Board[0, 2], Direction.Right);
+            _model.CreateCellWall(_model.Board[0, 11], Direction.Right);
+            _model.CreateCellWall(_model.Board[15, 3], Direction.Right);
+            _model.CreateCellWall(_model.Board[15, 11], Direction.Right);
+            _model.CreateCellWall(_model.Board[3, 0], Direction.Down);
+            _model.CreateCellWall(_model.Board[12, 0], Direction.Down);
+            _model.CreateCellWall(_model.Board[2, 15], Direction.Down);
+            _model.CreateCellWall(_model.Board[12, 15], Direction.Down);
+
+            //Middle 2x2
+            _model.CreateCellWall(_model.Board[7, 7], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
+            _model.CreateCellWall(_model.Board[7, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
+            _model.CreateCellWall(_model.Board[8, 7], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
+            _model.CreateCellWall(_model.Board[8, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
+
+            List<RobotMove> movesToWin = new List<RobotMove>()
+            { new RobotMove(_robotYellow.Id, _model.Board[4, 2], _model.Board[0, 2]),
+            new RobotMove(_robotGreen.Id, _model.Board[12, 2], _model.Board[1, 2]),
+            new RobotMove(_robotBlue.Id, _model.Board[14, 2], _model.Board[2, 2]),
+            new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[2, 3]) };
+
+            System.Diagnostics.Debugger.Launch();
+            GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
+            List<RobotMove> moves = solver.FindSolution();
             if (moves.Count < movesToWin.Count)
             {
                 Assert.IsTrue(false);
