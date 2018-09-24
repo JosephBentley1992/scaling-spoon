@@ -2,6 +2,7 @@
 using ScalingSpoon.Model.Enums;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +25,29 @@ namespace ScalingSpoon.Model
 
         public List<RobotMove> FindSolution()
         {
+
+            /*FileStream ostrm;
+            StreamWriter writer;
+            TextWriter oldOut = Console.Out;
+            try
+            {
+                ostrm = new FileStream("./Redirect.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                writer = new StreamWriter(ostrm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Cannot open Redirect.txt for writing");
+                Console.WriteLine(e.Message);
+                return null;
+            }
+
+            Console.SetOut(writer);
+            */
+
             NodeData nodeData = new NodeData(null, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
             Node root = new Node(nodeData, 0, null);
             _tree.Add(root.GetIndex(), root);
-            _winningDestination = _model.CurrentWinningDestination;
+            _winningDestination = _model.CurrentWinningDestination.Copy();
 
             for (int i = 0; i < _model.RobotCurrentLocations.Count; i++)
                 _robotsByPriority.Add(i);
@@ -35,6 +55,14 @@ namespace ScalingSpoon.Model
             _robotsByPriority = _robotsByPriority.OrderBy(r => r == _model.CurrentWinningDestination.WinningRobotId ? 0 : 1).ToList();
             
             Recursive(0);
+
+            /*
+            Console.SetOut(oldOut);
+            writer.Close();
+            ostrm.Close();
+            Console.WriteLine("Done");
+            */
+
             if (_winningNode == null)
                 return new List<RobotMove>();
 
@@ -57,10 +85,13 @@ namespace ScalingSpoon.Model
 
         private void Recursive(int depth)
         {
+            Console.WriteLine(String.Format("Beginning Depth: {0}", depth));
+
             Dictionary<int, Node> nodesToAdd = new Dictionary<int, Node>();
             //Process all nodes at this depth
             foreach (Node prev in _tree.Where(t => t.Value.Depth == depth).Select(t => t.Value))
             {
+                //Console.WriteLine(String.Format("Starting Node: {0}", prev.ToString()));
                 SetRobotCurrentLocations(prev);
                 foreach (int i in _robotsByPriority)
                 {
@@ -72,14 +103,18 @@ namespace ScalingSpoon.Model
                         if (move == null)
                             continue; //an Invalid move not worth saving
 
+                        //Console.WriteLine(move.ToString());
+
                         NodeData nodeData = new NodeData(move, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
                         Node next = new Node(nodeData, depth + 1, prev);
                         prev.Next.Add(next);
 
                         //This move found a solution, we're done processing.
-                        if (_model.CurrentWinningDestination.X != _winningDestination.X && _model.CurrentWinningDestination.Y != _winningDestination.Y)
+                        if (_model.CurrentWinningDestination.X != _winningDestination.X || _model.CurrentWinningDestination.Y != _winningDestination.Y)
                         {
+                            Console.WriteLine("Solution Found with this move.");
                             _winningNode = next;
+                            _model.UndoMove();
                             return;
                         }
 

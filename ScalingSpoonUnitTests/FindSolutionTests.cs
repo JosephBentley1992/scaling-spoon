@@ -346,6 +346,8 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
             new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
+
+            System.Diagnostics.Debugger.Launch();
             List<RobotMove> moves = solver.FindSolution();
 
             if (moves.Count < movesToWin.Count)

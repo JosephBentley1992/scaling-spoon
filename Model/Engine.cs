@@ -393,6 +393,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Right:
@@ -409,6 +410,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Down:
@@ -425,6 +427,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Left:
@@ -441,21 +444,24 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                 }
 
+                if (move == null)
+                    return new List<RobotMove>();
+
                 //Update the Robot position
                 this.UpdateRobotPosition(robot, initialLoc, currentLoc);
 
-                move = new RobotMove(robot, initialLoc, currentLoc);
                 this.CurrentWinningDestination.MoveHistory.Push(move);
 
                 if (move != null)
                     moves.Add(move);
             }
 
-            if (CurrentWinningDestination.RobotID == CurrentWinningDestination.WinningRobotId)
+            if (WinningDestinations.Count > 0 && this.Board[CurrentWinningDestination.X, CurrentWinningDestination.Y].RobotID == CurrentWinningDestination.WinningRobotId)
             {
                 CurrentWinningDestination.CurrentWinningCell = false;
                 CurrentWinningDestination = WinningDestinations[WinningDestinations.IndexOf(CurrentWinningDestination) + 1 == WinningDestinations.Count ? 0 : WinningDestinations.IndexOf(CurrentWinningDestination) + 1];
@@ -475,6 +481,7 @@ namespace ScalingSpoon.Model
             if (this.CurrentWinningDestination.MoveHistory.Count == 0)
             {
                 this.CurrentWinningDestination.CurrentWinningCell = false;
+                this.CurrentWinningDestination.RobotID = -1;
                 this.CurrentWinningDestination = this.WinningDestinations[index - 1];
                 this.CurrentWinningDestination.CurrentWinningCell = true;
             }
@@ -520,8 +527,11 @@ namespace ScalingSpoon.Model
 
         public void UpdateRobotPosition(int robotId, Cell initialLoc, Cell newLoc)
         {
-            initialLoc.RobotID = -1;
-            newLoc.RobotID = robotId;
+            Cell initialLocToUpdate = this.Board[initialLoc.X, initialLoc.Y];
+            Cell newLocToUpdate = this.Board[newLoc.X, newLoc.Y];
+
+            initialLocToUpdate.RobotID = -1;
+            newLocToUpdate.RobotID = robotId;
             DestinationCell dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == initialLoc.X && wd.Y == initialLoc.Y);
             if (dc != null)
                 dc.RobotID = -1;
@@ -530,7 +540,9 @@ namespace ScalingSpoon.Model
             if (dc != null)
                 dc.RobotID = robotId;
 
-            this.RobotCurrentLocations[robotId] = newLoc;
+            this.RobotCurrentLocations[robotId] = newLocToUpdate;
+            //this.Board[initialLoc.X, initialLoc.Y] = initialLoc;
+            //this.Board[newLoc.X, newLoc.Y] = newLoc;
         }
     }
 }
