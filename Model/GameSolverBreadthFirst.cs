@@ -25,25 +25,6 @@ namespace ScalingSpoon.Model
 
         public List<RobotMove> FindSolution()
         {
-
-            /*FileStream ostrm;
-            StreamWriter writer;
-            TextWriter oldOut = Console.Out;
-            try
-            {
-                ostrm = new FileStream("./Redirect.txt", FileMode.OpenOrCreate, FileAccess.Write);
-                writer = new StreamWriter(ostrm);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Cannot open Redirect.txt for writing");
-                Console.WriteLine(e.Message);
-                return null;
-            }
-
-            Console.SetOut(writer);
-            */
-
             NodeData nodeData = new NodeData(null, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
             Node root = new Node(nodeData, 0, null);
             _tree.Add(root.GetIndex(), root);
@@ -53,15 +34,7 @@ namespace ScalingSpoon.Model
                 _robotsByPriority.Add(i);
 
             _robotsByPriority = _robotsByPriority.OrderBy(r => r == _model.CurrentWinningDestination.WinningRobotId ? 0 : 1).ToList();
-            
             Recursive(0);
-
-            /*
-            Console.SetOut(oldOut);
-            writer.Close();
-            ostrm.Close();
-            Console.WriteLine("Done");
-            */
 
             if (_winningNode == null)
                 return new List<RobotMove>();
@@ -103,7 +76,7 @@ namespace ScalingSpoon.Model
                         if (move == null)
                             continue; //an Invalid move not worth saving
 
-                        //Console.WriteLine(move.ToString());
+                        Console.WriteLine(move.ToString());
 
                         NodeData nodeData = new NodeData(move, new Dictionary<int, Cell>(_model.RobotCurrentLocations));
                         Node next = new Node(nodeData, depth + 1, prev);

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace ScalingSpoonTests
 {
     [TestClass]
-    public class FindSolutionTests_DepthFirst
+    public class FindSolutionTests_DepthFirst : BaseTest
     {
         private static Engine _model;
         private static Robot _robot;
@@ -220,7 +220,7 @@ namespace ScalingSpoonTests
     }
 
     [TestClass]
-    public class FindSolutionTests_BreadthFirst
+    public class FindSolutionTests_BreadthFirst : BaseTest
     {
         private static Engine _model;
         private static Robot _robot;
