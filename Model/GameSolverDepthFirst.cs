@@ -100,7 +100,7 @@ namespace ScalingSpoon.Model
                     }
 
                     //This move found a solution
-                    if (_model.CurrentWinningDestination.X != _winningDestination.X && _model.CurrentWinningDestination.Y != _winningDestination.Y)
+                    if (_model.CurrentWinningDestination.X != _winningDestination.X || _model.CurrentWinningDestination.Y != _winningDestination.Y)
                     {
                         if (_fastestWin == -1)
                             _fastestWin = next.Depth;

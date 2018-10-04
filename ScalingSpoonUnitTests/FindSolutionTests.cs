@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace ScalingSpoonTests
 {
     [TestClass]
-    public class FindSolutionTests_DepthFirst
+    public class FindSolutionTests_DepthFirst : BaseTest
     {
         private static Engine _model;
         private static Robot _robot;
@@ -220,7 +220,7 @@ namespace ScalingSpoonTests
     }
 
     [TestClass]
-    public class FindSolutionTests_BreadthFirst
+    public class FindSolutionTests_BreadthFirst : BaseTest
     {
         private static Engine _model;
         private static Robot _robot;
@@ -346,6 +346,8 @@ namespace ScalingSpoonTests
             new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
             new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
+
+            System.Diagnostics.Debugger.Launch();
             List<RobotMove> moves = solver.FindSolution();
 
             if (moves.Count < movesToWin.Count)

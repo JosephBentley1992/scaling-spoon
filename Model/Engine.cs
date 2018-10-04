@@ -57,19 +57,7 @@ namespace ScalingSpoon.Model
             int xLength = this.Board.GetLength(0);
             int yLength = this.Board.GetLength(1);
 
-            for (int i = 0; i < robots; i++)
-            {
-                int xLoc = rand.Next(xLength);
-                int yLoc = rand.Next(yLength);
-                while (this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
-                    || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9)))
-                {
-                    xLoc = rand.Next(xLength);
-                    yLoc = rand.Next(yLength);
-                }
-
-                CreateRobot(xLoc, yLoc);
-            }
+            CreateRobot(0, 0);
 
             List<Cell> possibleWinningDestinations = new List<Cell>();
             for (int x = 1; x <= xLength - 2; x++)
@@ -202,6 +190,17 @@ namespace ScalingSpoon.Model
                                 }
 
                                 CreateCellWall(dc, Direction.Up, Direction.Right);
+                                if (this.CheckForLoops(dc))
+                                {
+                                    RemoveCellWall(dc, Direction.Up, Direction.Right);
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+                                else
+                                {
+                                    CreateCellWall(dc, Direction.Up, Direction.Right);
+                                }
                                 break;
                             case 1:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
@@ -213,6 +212,17 @@ namespace ScalingSpoon.Model
                                 }
 
                                 CreateCellWall(dc, Direction.Right, Direction.Down);
+                                if (this.CheckForLoops(dc))
+                                {
+                                    RemoveCellWall(dc, Direction.Right, Direction.Down);
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+                                else
+                                {
+                                    CreateCellWall(dc, Direction.Right, Direction.Down);
+                                }
                                 break;
                             case 2:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
@@ -224,6 +234,17 @@ namespace ScalingSpoon.Model
                                 }
 
                                 CreateCellWall(dc, Direction.Down, Direction.Left);
+                                if (this.CheckForLoops(dc))
+                                {
+                                    RemoveCellWall(dc, Direction.Down, Direction.Left);
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+                                else
+                                {
+                                    CreateCellWall(dc, Direction.Down, Direction.Left);
+                                }
                                 break;
                             case 3:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasNorthWall || this.Board[dc.X, dc.Y - 2].HasNorthWall))
@@ -235,6 +256,17 @@ namespace ScalingSpoon.Model
                                 }
 
                                 CreateCellWall(dc, Direction.Left, Direction.Up);
+                                if (this.CheckForLoops(dc))
+                                {
+                                    RemoveCellWall(dc, Direction.Left, Direction.Up);
+                                    if (triedWalls.Contains(r))
+                                        triedWalls.Remove(r);
+                                    break;
+                                }
+                                else
+                                {
+                                    CreateCellWall(dc, Direction.Left, Direction.Up);
+                                }
                                 break;
                         }
                     }
@@ -248,7 +280,7 @@ namespace ScalingSpoon.Model
                     {
                         this.Board[c.X, c.Y] = dc;
                         this.WinningDestinations.Add(dc);
-                        dc.WinningRobotId = rand.Next(_robotID);
+                        dc.WinningRobotId = rand.Next(robots);
                         RemoveCells(c, true, ref possibleWinningDestinations);
                         destinationAssigned = true;
                     }
@@ -257,6 +289,21 @@ namespace ScalingSpoon.Model
 
             CurrentWinningDestination = WinningDestinations[0];
             CurrentWinningDestination.CurrentWinningCell = true;
+
+            //Create the last x (3) robots
+            for (int i = 1; i < robots; i++)
+            {
+                int xLoc = rand.Next(xLength);
+                int yLoc = rand.Next(yLength);
+                while (this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
+                    || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9)))
+                {
+                    xLoc = rand.Next(xLength);
+                    yLoc = rand.Next(yLength);
+                }
+
+                CreateRobot(xLoc, yLoc);
+            }
         }
 
         private void RemoveCells(Cell cellToRemove, bool removeDiagonals, ref List<Cell> cells)
@@ -309,8 +356,18 @@ namespace ScalingSpoon.Model
             this.CreateCellWall(this.Board[x, y], directions);
         }
 
-        //Helper - Sets the current cells wall, and the adjacent cell.
         public void CreateCellWall(Cell c, params Direction[] directions)
+        {
+            CreateCellWalls(c, true, directions);
+        }
+
+        public void RemoveCellWall(Cell c, params Direction[] directions)
+        {
+            CreateCellWalls(c, false, directions);
+        }
+
+        //Helper - Sets the current cells wall, and the adjacent cell.
+        private void CreateCellWalls(Cell c, bool setWall, params Direction[] directions)
         {
             Cell adj = new Cell();
             foreach (Direction d in directions)
@@ -321,34 +378,165 @@ namespace ScalingSpoon.Model
                         if (c.X == 0)
                             break;
                         adj = this.Board[c.X - 1, c.Y];
-                        c.HasNorthWall = true;
-                        adj.HasSouthWall = true;
+                        c.HasNorthWall = setWall;
+                        adj.HasSouthWall = setWall;
                         break;
                     case Direction.Down:
                         if (c.X == this.Board.GetLength(0) - 1)
                             break;
                         adj = this.Board[c.X + 1, c.Y];
-                        c.HasSouthWall = true;
-                        adj.HasNorthWall = true;
+                        c.HasSouthWall = setWall;
+                        adj.HasNorthWall = setWall;
                         break;
                     case Direction.Left:
                         if (c.Y == 0)
                             break;
                         adj = this.Board[c.X, c.Y - 1];
-                        c.HasWestWall = true;
-                        adj.HasEastWall = true;
+                        c.HasWestWall = setWall;
+                        adj.HasEastWall = setWall;
                         break;
                     case Direction.Right:
                         if (c.Y == this.Board.GetLength(1) - 1)
                             break;
                         adj = this.Board[c.X, c.Y + 1];
-                        c.HasEastWall = true;
-                        adj.HasWestWall = true;
+                        c.HasEastWall = setWall;
+                        adj.HasWestWall = setWall;
                         break;
                 }
             }
         }
 
+        private bool CheckForLoops(DestinationCell d)
+        {
+            List<DestinationCell> cellsToCheck = new List<DestinationCell>();
+            cellsToCheck.AddRange(WinningDestinations);
+            cellsToCheck.Add(d);
+
+            foreach(DestinationCell dc in cellsToCheck)
+            {
+                int originalX = dc.X;
+                int originalY = dc.Y;
+                Cell c = this.Board[dc.X, dc.Y];
+
+                if (c.HasWestWall && c.HasSouthWall)
+                {
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Up);
+                    if (this.MoveRobot(0, Direction.Right).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Down).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Left);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Right);
+                    if (this.MoveRobot(0, Direction.Up).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Left).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Down);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+                }
+
+                if (c.HasWestWall && c.HasNorthWall)
+                {
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Down);
+                    if (this.MoveRobot(0, Direction.Right).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Up).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Left);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Right);
+                    if (this.MoveRobot(0, Direction.Down).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Left).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Up);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+                }
+
+                if (c.HasEastWall && c.HasNorthWall)
+                {
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Left);
+                    if (this.MoveRobot(0, Direction.Down).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Right).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Up);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Down);
+                    if (this.MoveRobot(0, Direction.Left).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Up).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Right);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+                }
+
+                if (c.HasEastWall && c.HasSouthWall)
+                {
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Up);
+                    if (this.MoveRobot(0, Direction.Left).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Down).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Right);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                    this.MoveRobot(0, Direction.Left);
+                    if (this.MoveRobot(0, Direction.Up).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, Direction.Right).Count == 0)
+                        continue;
+                    this.MoveRobot(0, Direction.Down);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+                }
+            }
+
+            return false;
+        }
         public Robot CreateRobot(int x, int y)
         {
             //TODO: 
@@ -393,6 +581,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Right:
@@ -409,6 +598,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Down:
@@ -425,6 +615,7 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                     case Direction.Left:
@@ -441,21 +632,24 @@ namespace ScalingSpoon.Model
                                 break;
 
                             currentLoc = nextLoc;
+                            move = new RobotMove(robot, initialLoc, currentLoc);
                         }
                         break;
                 }
 
+                if (move == null)
+                    return new List<RobotMove>();
+
                 //Update the Robot position
                 this.UpdateRobotPosition(robot, initialLoc, currentLoc);
 
-                move = new RobotMove(robot, initialLoc, currentLoc);
                 this.CurrentWinningDestination.MoveHistory.Push(move);
 
                 if (move != null)
                     moves.Add(move);
             }
 
-            if (CurrentWinningDestination.RobotID == CurrentWinningDestination.WinningRobotId)
+            if (WinningDestinations.Count > 0 && this.Board[CurrentWinningDestination.X, CurrentWinningDestination.Y].RobotID == CurrentWinningDestination.WinningRobotId)
             {
                 CurrentWinningDestination.CurrentWinningCell = false;
                 CurrentWinningDestination = WinningDestinations[WinningDestinations.IndexOf(CurrentWinningDestination) + 1 == WinningDestinations.Count ? 0 : WinningDestinations.IndexOf(CurrentWinningDestination) + 1];
@@ -475,6 +669,7 @@ namespace ScalingSpoon.Model
             if (this.CurrentWinningDestination.MoveHistory.Count == 0)
             {
                 this.CurrentWinningDestination.CurrentWinningCell = false;
+                this.CurrentWinningDestination.RobotID = -1;
                 this.CurrentWinningDestination = this.WinningDestinations[index - 1];
                 this.CurrentWinningDestination.CurrentWinningCell = true;
             }
@@ -520,8 +715,11 @@ namespace ScalingSpoon.Model
 
         public void UpdateRobotPosition(int robotId, Cell initialLoc, Cell newLoc)
         {
-            initialLoc.RobotID = -1;
-            newLoc.RobotID = robotId;
+            Cell initialLocToUpdate = this.Board[initialLoc.X, initialLoc.Y];
+            Cell newLocToUpdate = this.Board[newLoc.X, newLoc.Y];
+
+            initialLocToUpdate.RobotID = -1;
+            newLocToUpdate.RobotID = robotId;
             DestinationCell dc = this.WinningDestinations.FirstOrDefault(wd => wd.X == initialLoc.X && wd.Y == initialLoc.Y);
             if (dc != null)
                 dc.RobotID = -1;
@@ -530,7 +728,7 @@ namespace ScalingSpoon.Model
             if (dc != null)
                 dc.RobotID = robotId;
 
-            this.RobotCurrentLocations[robotId] = newLoc;
+            this.RobotCurrentLocations[robotId] = newLocToUpdate;
         }
     }
 }
