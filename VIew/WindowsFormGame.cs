@@ -49,7 +49,7 @@ namespace ScalingSpoon.View
             }
 
             _model = new Model.Engine();
-            _model.ConstructBoard(16, 16, 18, 4);
+            _model.ConstructBoard(16, 16, 17, 4);
             foreach (Cell c in _model.Board)
             {
                 ButtonCell bc = new ButtonCell(c);

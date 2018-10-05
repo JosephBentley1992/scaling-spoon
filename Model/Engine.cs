@@ -135,6 +135,7 @@ namespace ScalingSpoon.Model
 
             List<int> availableRows = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
             List<int> availableCols = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+            int[] quadrants = new int[] { 0, 0, 0, 0 };
             for (int i = 0; i < destinations; i++)
             {
                 bool destinationAssigned = false;
@@ -278,6 +279,20 @@ namespace ScalingSpoon.Model
                     }
                     else
                     {
+                        int q = GetCellQuadrant(dc);
+                        quadrants[q]++;
+                        if (quadrants[q] > 4)
+                        {
+                            //Seriously, rewrite this
+                            //GetCellQuadrant can be on the cell itself too, doesn't have to be a method in the engine.
+                            List<Cell> cellsToRemove = new List<Cell>();
+                            foreach (Cell d in possibleWinningDestinations)
+                                if (GetCellQuadrant(d) == q)
+                                    cellsToRemove.Add(d);
+
+                            foreach (Cell d in cellsToRemove)
+                                possibleWinningDestinations.Remove(d);
+                        }
                         this.Board[c.X, c.Y] = dc;
                         this.WinningDestinations.Add(dc);
                         dc.WinningRobotId = rand.Next(robots);
@@ -537,6 +552,20 @@ namespace ScalingSpoon.Model
 
             return false;
         }
+
+        private int GetCellQuadrant(Cell c)
+        {
+            if (c.X <= 7 && c.Y <= 7)
+                return 1;
+            if (c.X <= 7 && c.Y >= 8)
+                return 0;
+            if (c.X >= 8 && c.Y <= 7)
+                return 2;
+            if (c.X >= 8 && c.Y >= 8)
+                return 3;
+            return 0;
+        }
+
         public Robot CreateRobot(int x, int y)
         {
             //TODO: 
