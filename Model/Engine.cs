@@ -11,7 +11,7 @@ namespace ScalingSpoon.Model
 {
     /// <summary>
     /// I feel liks I have the minimum requirements of a solution for the Model, with some of the game management being handled by the Controller.
-    /// When a Move reaches the destination, the Model can update the new winning destination, but its going to be up to the Controller to present that knowledge to the View..
+    /// When a Move reaches the destination, the Model can update the new winning destination, but its going to be up to the Controller to present that knowledge to the View.
     /// So does the Model really need to return "You reached a destination! Congratulations!" or should that just be inferred from the fact that a new winning destination was set?
     /// </summary>
     public class Engine
@@ -51,7 +51,7 @@ namespace ScalingSpoon.Model
             int id = 0;
             for (int x = 0; x <= this.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= this.Board.GetLength(1) - 1; y++)
-                    this.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    this.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             Random rand = new Random();
             int xLength = this.Board.GetLength(0);
@@ -176,14 +176,14 @@ namespace ScalingSpoon.Model
                     List<int> triedWalls = new List<int> { 0, 1, 2, 3 };
 
                     //While (we have more walls to try) && (we haven't assigned walls to the destination)
-                    while (triedWalls.Count > 0 && (!(dc.HasNorthWall || dc.HasEastWall || dc.HasSouthWall || dc.HasWestWall)))
+                    while (triedWalls.Count > 0 && c.Walls == CellWalls.None)
                     {
                         r = rand.Next(4);
                         switch (r)
                         {
                             case 0:
-                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasNorthWall || this.Board[dc.X, dc.Y - 2].HasNorthWall))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasEastWall || this.Board[dc.X - 2, dc.Y].HasEastWall)))
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Up) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Up)))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right))))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -204,8 +204,8 @@ namespace ScalingSpoon.Model
                                 }
                                 break;
                             case 1:
-                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasEastWall || this.Board[dc.X - 2, dc.Y].HasEastWall)))
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Down) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Down)))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right))))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -226,8 +226,8 @@ namespace ScalingSpoon.Model
                                 }
                                 break;
                             case 2:
-                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasSouthWall || this.Board[dc.X, dc.Y - 2].HasSouthWall))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasWestWall || this.Board[dc.X - 2, dc.Y].HasWestWall)))
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Down) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Down)))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left))))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -248,8 +248,8 @@ namespace ScalingSpoon.Model
                                 }
                                 break;
                             case 3:
-                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].HasNorthWall || this.Board[dc.X, dc.Y - 2].HasNorthWall))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].HasWestWall || this.Board[dc.X - 2, dc.Y].HasWestWall)))
+                                if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Up) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Up)))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left))))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -273,7 +273,7 @@ namespace ScalingSpoon.Model
                     }
 
                     //None of the 4 L walls work for this position. Remove it, and try another cell.
-                    if (!(dc.HasNorthWall || dc.HasEastWall || dc.HasSouthWall || dc.HasWestWall))
+                    if (c.Walls == CellWalls.None)
                     {
                         possibleWinningDestinations.Remove(dc);
                     }
@@ -387,36 +387,35 @@ namespace ScalingSpoon.Model
             Cell adj = new Cell();
             foreach (Direction d in directions)
             {
-                switch (d)
+                int xDiff = d == Direction.Up ? -1 : d == Direction.Down ? 1 : 0;
+                int yDiff = d == Direction.Left ? -1 : d == Direction.Right ? 1 : 0;
+                int x = c.X + xDiff;
+                int y = c.Y + yDiff;
+                if (setWall)
+                    c.Walls = (CellWalls)((int)c.Walls | (int)d);
+                else
+                    c.Walls = (CellWalls)((int)c.Walls ^ (int)d);
+
+                if ((xDiff != 0 && (c.X == 0 || c.X == this.Board.GetLength(0) - 1)) ||
+                    (yDiff != 0 && (c.Y == 0 || c.Y == this.Board.GetLength(1) - 1)))
+                    continue;
+
+                adj = this.Board[x, y];
+
+                //uhhhh
+                if (setWall)
                 {
-                    case Direction.Up:
-                        if (c.X == 0)
-                            break;
-                        adj = this.Board[c.X - 1, c.Y];
-                        c.HasNorthWall = setWall;
-                        adj.HasSouthWall = setWall;
-                        break;
-                    case Direction.Down:
-                        if (c.X == this.Board.GetLength(0) - 1)
-                            break;
-                        adj = this.Board[c.X + 1, c.Y];
-                        c.HasSouthWall = setWall;
-                        adj.HasNorthWall = setWall;
-                        break;
-                    case Direction.Left:
-                        if (c.Y == 0)
-                            break;
-                        adj = this.Board[c.X, c.Y - 1];
-                        c.HasWestWall = setWall;
-                        adj.HasEastWall = setWall;
-                        break;
-                    case Direction.Right:
-                        if (c.Y == this.Board.GetLength(1) - 1)
-                            break;
-                        adj = this.Board[c.X, c.Y + 1];
-                        c.HasEastWall = setWall;
-                        adj.HasWestWall = setWall;
-                        break;
+                    if (xDiff - yDiff == -1)
+                        adj.Walls = (CellWalls)((int)adj.Walls | (int)d << (xDiff - yDiff) * -1);
+                    else
+                        adj.Walls = (CellWalls)((int)adj.Walls | (int)d >> (xDiff - yDiff));
+                }
+                else
+                {
+                    if (xDiff - yDiff == -1)
+                        adj.Walls = (CellWalls)((int)adj.Walls & ~(int)d << (xDiff - yDiff) * -1);
+                    else
+                        adj.Walls = (CellWalls)((int)adj.Walls & ~(int)d >> (xDiff - yDiff));
                 }
             }
         }
@@ -427,123 +426,30 @@ namespace ScalingSpoon.Model
             cellsToCheck.AddRange(WinningDestinations);
             cellsToCheck.Add(d);
 
-            foreach(DestinationCell dc in cellsToCheck)
+            foreach (DestinationCell dc in cellsToCheck)
             {
                 int originalX = dc.X;
                 int originalY = dc.Y;
-                Cell c = this.Board[dc.X, dc.Y];
-
-                if (c.HasWestWall && c.HasSouthWall)
+                //Cell c = this.Board[dc.X, dc.Y];
+                Dictionary<CellWalls, List<Direction>> loops = new Dictionary<CellWalls, List<Direction>>()
                 {
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+                    {CellWalls.DownAndLeft, new List<Direction>() { Direction.Up, Direction.Right, Direction.Down, Direction.Left, Direction.Right, Direction.Up, Direction.Left, Direction.Down} },
+                    {CellWalls.LeftAndUp, new List<Direction>() {Direction.Down, Direction.Right, Direction.Up, Direction.Left, Direction.Right, Direction.Down, Direction.Left, Direction.Up } },
+                    {CellWalls.UpAndRight, new List<Direction>() {Direction.Left, Direction.Down, Direction.Right, Direction.Up, Direction.Down, Direction.Left, Direction.Up, Direction.Right } },
+                    {CellWalls.RightAndDown, new List<Direction>() {Direction.Up, Direction.Left, Direction.Down, Direction.Right, Direction.Left, Direction.Up, Direction.Right, Direction.Down } }
+                };
 
-                    this.MoveRobot(0, Direction.Up);
-                    if (this.MoveRobot(0, Direction.Right).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Down).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Left);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Right);
-                    if (this.MoveRobot(0, Direction.Up).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Left).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Down);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-                }
-
-                if (c.HasWestWall && c.HasNorthWall)
+                int i = 0;
+                for (int y = 0; y < 2; y++)
                 {
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Down);
-                    if (this.MoveRobot(0, Direction.Right).Count == 0)
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], dc);
+                    this.MoveRobot(0, loops[dc.Walls][i++]);
+                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
                         continue;
 
-                    if (this.MoveRobot(0, Direction.Up).Count == 0)
+                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
                         continue;
-                    this.MoveRobot(0, Direction.Left);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Right);
-                    if (this.MoveRobot(0, Direction.Down).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Left).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Up);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-                }
-
-                if (c.HasEastWall && c.HasNorthWall)
-                {
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Left);
-                    if (this.MoveRobot(0, Direction.Down).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Right).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Up);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Down);
-                    if (this.MoveRobot(0, Direction.Left).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Up).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Right);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-                }
-
-                if (c.HasEastWall && c.HasSouthWall)
-                {
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Up);
-                    if (this.MoveRobot(0, Direction.Left).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Down).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Right);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
-
-                    this.MoveRobot(0, Direction.Left);
-                    if (this.MoveRobot(0, Direction.Up).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, Direction.Right).Count == 0)
-                        continue;
-                    this.MoveRobot(0, Direction.Down);
+                    this.MoveRobot(0, loops[dc.Walls][i++]);
 
                     if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
                         return true;
@@ -597,7 +503,7 @@ namespace ScalingSpoon.Model
                 switch (d)
                 {
                     case Direction.Up:
-                        if (initialLoc.HasNorthWall || initialLoc.X == 0)
+                        if (initialLoc.Walls.HasFlag(CellWalls.Up) || initialLoc.X == 0)
                         {
                             move = null;
                             continue;
@@ -606,7 +512,7 @@ namespace ScalingSpoon.Model
                         for (int i = initialLoc.X - 1; i >= 0; i--)
                         {
                             nextLoc = this.Board[i, initialLoc.Y];
-                            if (nextLoc.HasSouthWall || nextLoc.RobotID != -1)
+                            if (nextLoc.Walls.HasFlag(CellWalls.Down) || nextLoc.RobotID != -1)
                                 break;
 
                             currentLoc = nextLoc;
@@ -614,7 +520,7 @@ namespace ScalingSpoon.Model
                         }
                         break;
                     case Direction.Right:
-                        if (initialLoc.HasEastWall || initialLoc.Y == Board.GetLength(1) - 1)
+                        if (initialLoc.Walls.HasFlag(CellWalls.Right) || initialLoc.Y == Board.GetLength(1) - 1)
                         {
                             move = null;
                             continue;
@@ -623,7 +529,7 @@ namespace ScalingSpoon.Model
                         for (int i = initialLoc.Y + 1; i <= Board.GetLength(1) - 1; i++)
                         {
                             nextLoc = this.Board[initialLoc.X, i];
-                            if (nextLoc.HasWestWall || nextLoc.RobotID != -1)
+                            if (nextLoc.Walls.HasFlag(CellWalls.Left) || nextLoc.RobotID != -1)
                                 break;
 
                             currentLoc = nextLoc;
@@ -631,7 +537,7 @@ namespace ScalingSpoon.Model
                         }
                         break;
                     case Direction.Down:
-                        if (initialLoc.HasSouthWall || initialLoc.X == Board.GetLength(0) - 1)
+                        if (initialLoc.Walls.HasFlag(CellWalls.Down) || initialLoc.X == Board.GetLength(0) - 1)
                         {
                             move = null;
                             continue;
@@ -640,7 +546,7 @@ namespace ScalingSpoon.Model
                         for (int i = initialLoc.X + 1; i <= Board.GetLength(0) - 1; i++)
                         {
                             nextLoc = this.Board[i, initialLoc.Y];
-                            if (nextLoc.HasNorthWall || nextLoc.RobotID != -1)
+                            if (nextLoc.Walls.HasFlag(CellWalls.Up) || nextLoc.RobotID != -1)
                                 break;
 
                             currentLoc = nextLoc;
@@ -648,7 +554,7 @@ namespace ScalingSpoon.Model
                         }
                         break;
                     case Direction.Left:
-                        if (initialLoc.HasWestWall || initialLoc.Y == 0)
+                        if (initialLoc.Walls.HasFlag(CellWalls.Left) || initialLoc.Y == 0)
                         {
                             move = null;
                             continue;
@@ -657,7 +563,7 @@ namespace ScalingSpoon.Model
                         for (int i = initialLoc.Y - 1; i >= 0; i--)
                         {
                             nextLoc = this.Board[initialLoc.X, i];
-                            if (nextLoc.HasEastWall || nextLoc.RobotID != -1)
+                            if (nextLoc.Walls.HasFlag(CellWalls.Right) || nextLoc.RobotID != -1)
                                 break;
 
                             currentLoc = nextLoc;

@@ -28,7 +28,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(2, 1);
 
@@ -64,7 +64,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4, 4);
 
@@ -114,7 +114,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4, 4);
             _robotBlue = _model.CreateRobot(2, 2);
@@ -154,7 +154,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4,2);
             _robotGreen = _model.CreateRobot(10, 2);
@@ -241,7 +241,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(2, 1);
 
@@ -277,7 +277,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4, 4);
 
@@ -328,7 +328,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4, 4);
             _robotBlue = _model.CreateRobot(2, 2);
@@ -370,7 +370,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(4, 2);
             _robotGreen = _model.CreateRobot(10, 2);
@@ -443,7 +443,7 @@ namespace ScalingSpoonTests
             int id = 0;
             for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
                 for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
-                    _model.Board[x, y] = new Cell(id++, false, false, false, false, x, y);
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
 
             _robot = _model.CreateRobot(13, 1);
             _robotGreen = _model.CreateRobot(12, 2);

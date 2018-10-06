@@ -59,6 +59,7 @@
     <Compile Include="Model\Bus\Robot.cs" />
     <Compile Include="Model\Bus\RobotMove.cs" />
     <Compile Include="Model\Engine.cs" />
+    <Compile Include="Model\Enums\CellWalls.cs" />
     <Compile Include="Model\Enums\Direction.cs" />
     <Compile Include="Model\GameSolverBreadthFirst.cs" />
     <Compile Include="Model\GameSolverDepthFirst.cs" />

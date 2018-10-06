@@ -1,4 +1,5 @@
 ﻿using ScalingSpoon.Model.Bus;
+using ScalingSpoon.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,19 +41,19 @@ namespace ScalingSpoon.View.Bus
             base.OnPaint(e);
 
             //Draw solid box in the middle
-            if (_cell.HasNorthWall && _cell.HasSouthWall && _cell.HasEastWall && _cell.HasWestWall)
+            if (_cell.Walls.HasFlag(CellWalls.Up) && _cell.Walls.HasFlag(CellWalls.Down) && _cell.Walls.HasFlag(CellWalls.Right) && _cell.Walls.HasFlag(CellWalls.Left))
             {
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 32));
                 return;
             }
 
-            if (_cell.HasNorthWall)
+            if (_cell.Walls.HasFlag(CellWalls.Up))
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 3, 32));
-            if (_cell.HasSouthWall)
+            if (_cell.Walls.HasFlag(CellWalls.Down))
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(29, 0, 3, 32));
-            if (_cell.HasEastWall)
+            if (_cell.Walls.HasFlag(CellWalls.Right))
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 29, 32, 3));
-            if (_cell.HasWestWall)
+            if (_cell.Walls.HasFlag(CellWalls.Left))
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 3));
 
             if (_cell.RobotID != -1)

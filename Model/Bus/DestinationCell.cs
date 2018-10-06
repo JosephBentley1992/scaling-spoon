@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using ScalingSpoon.Model.Enums;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ScalingSpoon.Model.Bus
 {
-    [DebuggerDisplay("({X},{Y}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
+    [DebuggerDisplay("({X},{Y}) - {Walls}")]
     public class DestinationCell : Cell
     {
         public int WinningRobotId { get; set; }
@@ -26,8 +27,8 @@ namespace ScalingSpoon.Model.Bus
             Id = id;
         }
 
-        public DestinationCell(int id, bool hasNorthWall, bool hasEastWall, bool hasSouthWall, bool hasWestWall, int x, int y)
-            : base(id, hasNorthWall, hasEastWall, hasSouthWall, hasWestWall, x, y)
+        public DestinationCell(int id, CellWalls walls, int x, int y)
+            : base(id, walls, x, y)
         {
 
         }
@@ -35,10 +36,7 @@ namespace ScalingSpoon.Model.Bus
         public DestinationCell(Cell c)
         {
             this.Id = c.Id;
-            this.HasNorthWall = c.HasNorthWall;
-            this.HasEastWall = c.HasEastWall;
-            this.HasSouthWall = c.HasSouthWall;
-            this.HasWestWall = c.HasWestWall;
+            this.Walls = c.Walls;
             this.X = c.X;
             this.Y = c.Y;
             this.RobotID = c.RobotID;

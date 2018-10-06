@@ -1,15 +1,13 @@
-﻿using System.Diagnostics;
+﻿using ScalingSpoon.Model.Enums;
+using System.Diagnostics;
 
 namespace ScalingSpoon.Model.Bus
 {
-    [DebuggerDisplay("({X},{Y},{RobotID}) - {HasNorthWall} {HasEastWall} {HasSouthWall} {HasWestWall}")]
+    [DebuggerDisplay("({X},{Y},{RobotID}) - {Walls}")]
     public class Cell
     {
         public int Id { get; set; }
-        public bool HasNorthWall { get; set; }
-        public bool HasEastWall { get; set; }
-        public bool HasSouthWall { get; set; }
-        public bool HasWestWall { get; set; }
+        public CellWalls Walls { get; set; } = CellWalls.None;
         public int X { get; set; }
         public int Y { get; set; }
         public int RobotID { get; set; } = -1;
@@ -22,13 +20,10 @@ namespace ScalingSpoon.Model.Bus
             Id = id;
         }
         
-        public Cell(int id, bool hasNorthWall, bool hasEastWall, bool hasSouthWall, bool hasWestWall, int x, int y)
+        public Cell(int id, CellWalls walls, int x, int y)
         {
             Id = id;
-            HasNorthWall = hasNorthWall;
-            HasEastWall = hasEastWall;
-            HasSouthWall = hasSouthWall;
-            HasWestWall = hasWestWall;
+            Walls = walls;
             X = x;
             Y = y;
         }
