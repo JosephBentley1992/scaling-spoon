@@ -22,6 +22,7 @@ namespace ScalingSpoon.Model
         public List<DestinationCell> WinningDestinations { get; set; }
         public DestinationCell CurrentWinningDestination { get; set; }
         private int _robotID = 0;
+        public bool AutoSetNextWinningDestination { get; set; } = true;
 
         public Engine()
         {
@@ -138,9 +139,15 @@ namespace ScalingSpoon.Model
             int[] quadrants = new int[] { 0, 0, 0, 0 };
             for (int i = 0; i < destinations; i++)
             {
+                if (possibleWinningDestinations.Count == 0)
+                    break;
+
                 bool destinationAssigned = false;
                 while (!destinationAssigned)
                 {
+                    if (possibleWinningDestinations.Count == 0)
+                        break;
+
                     if (availableRows.Count != 0 && availableCols.Count != 0)
                     {
                         int x = availableRows[rand.Next(availableRows.Count)];
@@ -176,7 +183,7 @@ namespace ScalingSpoon.Model
                     List<int> triedWalls = new List<int> { 0, 1, 2, 3 };
 
                     //While (we have more walls to try) && (we haven't assigned walls to the destination)
-                    while (triedWalls.Count > 0 && c.Walls == CellWalls.None)
+                    while (triedWalls.Count > 0 && dc.Walls == CellWalls.None)
                     {
                         r = rand.Next(4);
                         switch (r)
@@ -273,21 +280,19 @@ namespace ScalingSpoon.Model
                     }
 
                     //None of the 4 L walls work for this position. Remove it, and try another cell.
-                    if (c.Walls == CellWalls.None)
+                    if (dc.Walls == CellWalls.None)
                     {
                         possibleWinningDestinations.Remove(dc);
                     }
                     else
                     {
-                        int q = GetCellQuadrant(dc);
+                        int q = dc.GetQuadrant();
                         quadrants[q]++;
-                        if (quadrants[q] > 4)
+                        if (quadrants[q] > 3)
                         {
-                            //Seriously, rewrite this
-                            //GetCellQuadrant can be on the cell itself too, doesn't have to be a method in the engine.
                             List<Cell> cellsToRemove = new List<Cell>();
                             foreach (Cell d in possibleWinningDestinations)
-                                if (GetCellQuadrant(d) == q)
+                                if (d.GetQuadrant() == q)
                                     cellsToRemove.Add(d);
 
                             foreach (Cell d in cellsToRemove)
@@ -304,6 +309,10 @@ namespace ScalingSpoon.Model
 
             CurrentWinningDestination = WinningDestinations[0];
             CurrentWinningDestination.CurrentWinningCell = true;
+
+            //Checking for loops actually adds to the history... just clear it for now i guess.
+            CurrentWinningDestination.MoveHistory.Clear();
+            CurrentWinningDestination.PoppedHistory.Clear();
 
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)
@@ -459,19 +468,6 @@ namespace ScalingSpoon.Model
             return false;
         }
 
-        private int GetCellQuadrant(Cell c)
-        {
-            if (c.X <= 7 && c.Y <= 7)
-                return 1;
-            if (c.X <= 7 && c.Y >= 8)
-                return 0;
-            if (c.X >= 8 && c.Y <= 7)
-                return 2;
-            if (c.X >= 8 && c.Y >= 8)
-                return 3;
-            return 0;
-        }
-
         public Robot CreateRobot(int x, int y)
         {
             //TODO: 
@@ -584,13 +580,20 @@ namespace ScalingSpoon.Model
                     moves.Add(move);
             }
 
-            if (WinningDestinations.Count > 0 && this.Board[CurrentWinningDestination.X, CurrentWinningDestination.Y].RobotID == CurrentWinningDestination.WinningRobotId)
+            if (AutoSetNextWinningDestination)
+                SetNextWinningDestination();
+
+            return moves;
+        }
+
+        public void SetNextWinningDestination()
+        {
+            if (this.AtWinningDestiation())
             {
                 CurrentWinningDestination.CurrentWinningCell = false;
                 CurrentWinningDestination = WinningDestinations[WinningDestinations.IndexOf(CurrentWinningDestination) + 1 == WinningDestinations.Count ? 0 : WinningDestinations.IndexOf(CurrentWinningDestination) + 1];
                 CurrentWinningDestination.CurrentWinningCell = true;
             }
-            return moves;
         }
 
         public void UndoMove()
@@ -664,6 +667,18 @@ namespace ScalingSpoon.Model
                 dc.RobotID = robotId;
 
             this.RobotCurrentLocations[robotId] = newLocToUpdate;
+        }
+
+        public void ResetCurrentWinningPosition()
+        {
+            int loopCount = this.CurrentWinningDestination.MoveHistory.Count;
+            for (int i = 0; i < loopCount; i++)
+                this.UndoMove();
+        }
+
+        public bool AtWinningDestiation()
+        {
+            return WinningDestinations.Count > 0 && this.Board[CurrentWinningDestination.X, CurrentWinningDestination.Y].RobotID == CurrentWinningDestination.WinningRobotId;
         }
     }
 }

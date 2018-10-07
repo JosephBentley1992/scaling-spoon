@@ -21,6 +21,7 @@ namespace ScalingSpoon.Model
         public GameSolverBreadthFirst(Engine e)
         {
             _model = e.Copy();
+            _model.AutoSetNextWinningDestination = true;
         }
 
         public List<RobotMove> FindSolution()

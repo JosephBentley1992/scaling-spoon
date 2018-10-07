@@ -42,5 +42,18 @@ namespace ScalingSpoon.Model.Bus
         {
             return string.Format("({0},{1})", X, Y);
         }
+
+        public int GetQuadrant()
+        {
+            if (this.X <= 7 && this.Y <= 7)
+                return 1;
+            if (this.X <= 7 && this.Y >= 8)
+                return 0;
+            if (this.X >= 8 && this.Y <= 7)
+                return 2;
+            if (this.X >= 8 && this.Y >= 8)
+                return 3;
+            return 0;
+        }
     }
 }
