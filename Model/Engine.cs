@@ -136,7 +136,13 @@ namespace ScalingSpoon.Model
 
             List<int> availableRows = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
             List<int> availableCols = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
-            int[] quadrants = new int[] { 0, 0, 0, 0 };
+            List<List<int>> quadrants = new List<List<int>>()
+            {
+                new List<int> { 0, 1, 2, 3 },
+                new List<int> { 0, 1, 2, 3 },
+                new List<int> { 0, 1, 2, 3 },
+                new List<int> { 0, 1, 2, 3 }
+            };
             for (int i = 0; i < destinations; i++)
             {
                 if (possibleWinningDestinations.Count == 0)
@@ -190,7 +196,8 @@ namespace ScalingSpoon.Model
                         {
                             case 0:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Up) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Up)))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right))))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right)))
+                                    || !quadrants[dc.GetQuadrant()].Contains(0))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -208,11 +215,13 @@ namespace ScalingSpoon.Model
                                 else
                                 {
                                     CreateCellWall(dc, Direction.Up, Direction.Right);
+                                    quadrants[dc.GetQuadrant()].Remove(0);
                                 }
                                 break;
                             case 1:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Down) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Down)))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right))))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Right) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Right)))
+                                    || !quadrants[dc.GetQuadrant()].Contains(1))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -230,11 +239,13 @@ namespace ScalingSpoon.Model
                                 else
                                 {
                                     CreateCellWall(dc, Direction.Right, Direction.Down);
+                                    quadrants[dc.GetQuadrant()].Remove(1);
                                 }
                                 break;
                             case 2:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Down) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Down)))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left))))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left)))
+                                    || !quadrants[dc.GetQuadrant()].Contains(2))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -252,11 +263,13 @@ namespace ScalingSpoon.Model
                                 else
                                 {
                                     CreateCellWall(dc, Direction.Down, Direction.Left);
+                                    quadrants[dc.GetQuadrant()].Remove(2);
                                 }
                                 break;
                             case 3:
                                 if (((dc.Y + 2 <= yLength - 1 && dc.Y - 2 >= 0) && (this.Board[dc.X, dc.Y + 2].Walls.HasFlag(CellWalls.Up) || this.Board[dc.X, dc.Y - 2].Walls.HasFlag(CellWalls.Up)))
-                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left))))
+                                    || ((dc.X + 2 <= xLength - 1 && dc.X - 2 >= 0) && (this.Board[dc.X + 2, dc.Y].Walls.HasFlag(CellWalls.Left) || this.Board[dc.X - 2, dc.Y].Walls.HasFlag(CellWalls.Left)))
+                                    || !quadrants[dc.GetQuadrant()].Contains(3))
                                 {
                                     if (triedWalls.Contains(r))
                                         triedWalls.Remove(r);
@@ -274,6 +287,7 @@ namespace ScalingSpoon.Model
                                 else
                                 {
                                     CreateCellWall(dc, Direction.Left, Direction.Up);
+                                    quadrants[dc.GetQuadrant()].Remove(3);
                                 }
                                 break;
                         }
@@ -287,8 +301,7 @@ namespace ScalingSpoon.Model
                     else
                     {
                         int q = dc.GetQuadrant();
-                        quadrants[q]++;
-                        if (quadrants[q] > 3)
+                        if (quadrants[q].Count == 0)
                         {
                             List<Cell> cellsToRemove = new List<Cell>();
                             foreach (Cell d in possibleWinningDestinations)

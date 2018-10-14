@@ -12,6 +12,7 @@ namespace ScalingSpoon.Model.Enums
         UpAndRight = Up | Right,
         RightAndDown = Right | Down,
         DownAndLeft = Down | Left,
-        LeftAndUp = Left | Up
+        LeftAndUp = Left | Up,
+        All = Up | Right | Down | Left
     }
 }
