@@ -312,20 +312,22 @@ namespace ScalingSpoon.Model
                                 possibleWinningDestinations.Remove(d);
                         }
                         this.Board[c.X, c.Y] = dc;
-                        this.WinningDestinations.Add(dc);
                         dc.WinningRobotId = rand.Next(robots);
                         RemoveCells(c, true, ref possibleWinningDestinations);
                         destinationAssigned = true;
+
+                        //Checking for loops actually adds to the history... just clear it for now i guess.
+                        dc.MoveHistory.Clear();
+                        dc.PoppedHistory.Clear();
+                        dc.CurrentWinningCell = false;
+
+                        this.WinningDestinations.Add(dc);
                     }
                 }
             }
 
             CurrentWinningDestination = WinningDestinations[0];
             CurrentWinningDestination.CurrentWinningCell = true;
-
-            //Checking for loops actually adds to the history... just clear it for now i guess.
-            CurrentWinningDestination.MoveHistory.Clear();
-            CurrentWinningDestination.PoppedHistory.Clear();
 
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)
