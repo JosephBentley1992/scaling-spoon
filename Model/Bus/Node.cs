@@ -58,7 +58,6 @@ namespace ScalingSpoon.Model.Bus
         /// and quickly query for the information without having to calculate the index every time.
         /// </summary>
         /// <returns></returns>
-
         public int GetIndex()
         {
             if (this.Data == null || this.Data.CurrentRobotLocations == null || this.Data.CurrentRobotLocations.Count == 0)

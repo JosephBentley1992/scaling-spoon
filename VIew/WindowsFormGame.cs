@@ -138,6 +138,9 @@ namespace ScalingSpoon.View
         private void btnSolve_Click(object sender, EventArgs e)
         {
             txtSolutionPath.Clear();
+            foreach (Cell c in _model.Board)
+                c.RobotPath = 0;
+
             txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)42.0);
             List<RobotMove> movesToWin = new GameSolverBreadthFirst(_model).FindSolution();
             if (movesToWin == null || movesToWin.Count == 0)
@@ -159,6 +162,19 @@ namespace ScalingSpoon.View
                 if (move.GetDirection() == Direction.Left)
                     txtSolutionPath.AppendText("⇧", _robotColors[move.RobotId]);
             }
+
+            _model.AutoSetRobotPath = true;
+            foreach (RobotMove move in movesToWin)
+            {
+                _model.MoveRobot(move.RobotId, move.GetDirection());
+            }
+            _model.AutoSetRobotPath = false;
+
+            foreach (RobotMove move in movesToWin)
+            {
+                _model.UndoMove();
+            }
+            Refresh();
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -178,6 +194,10 @@ namespace ScalingSpoon.View
             _model.SetNextWinningDestination();
             txtSolvedNumberOfMoves.Text = String.Empty;
             txtSolutionPath.Text = String.Empty;
+
+            foreach (Cell c in _model.Board)
+                c.RobotPath = 0;
+
             Refresh();
         }
 

@@ -134,5 +134,8 @@
   <ItemGroup>
     <None Include="Resources\star.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="View\Images\Solved Path Lines.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,6 +11,7 @@ namespace ScalingSpoon.Model.Bus
         public int X { get; set; }
         public int Y { get; set; }
         public int RobotID { get; set; } = -1;
+        public int RobotPath { get; set; } = 0;
         public Cell()
         {
         }

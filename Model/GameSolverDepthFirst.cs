@@ -22,6 +22,7 @@ namespace ScalingSpoon.Model
         {
             _model = e.Copy();
             _model.AutoSetNextWinningDestination = true;
+            _model.AutoSetRobotPath = true;
         }
 
         public List<RobotMove> FindSolution()

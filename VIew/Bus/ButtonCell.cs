@@ -47,13 +47,15 @@ namespace ScalingSpoon.View.Bus
                 return;
             }
 
-            if (_cell.Walls.HasFlag(CellWalls.Up))
+            // -  x
+            // y
+            if (_cell.Walls.HasFlag(CellWalls.Up)) //Up = left wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 3, 32));
-            if (_cell.Walls.HasFlag(CellWalls.Down))
+            if (_cell.Walls.HasFlag(CellWalls.Down)) //Down = right wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(29, 0, 3, 32));
-            if (_cell.Walls.HasFlag(CellWalls.Right))
+            if (_cell.Walls.HasFlag(CellWalls.Right)) //Right = down wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 29, 32, 3));
-            if (_cell.Walls.HasFlag(CellWalls.Left))
+            if (_cell.Walls.HasFlag(CellWalls.Left)) //Left = Up wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 3));
 
             if (_cell.RobotID != -1)
@@ -66,6 +68,35 @@ namespace ScalingSpoon.View.Bus
                 using (Font f = new Font("Tahoma", 16, FontStyle.Regular))
                 using (Brush b = new SolidBrush(_robotColors[dc.WinningRobotId]))
                     e.Graphics.DrawString("★", f, b, 3, 3);
+            }
+
+            //Draw Solved Path onto the board.
+            //Solved Path Lines.png - interesections are separated by a pixel, so they don't overlap on top of each other.
+            // For some reason, the pixels seem to be 1 off when drawing onto the buttons? Not sure. Adding 1 cause them to line up.
+            int tempRobotPath = _cell.RobotPath;
+            for (int i = 0; i < 4; i++)
+            {
+                int xyCord = 12 + (i * 2);
+                int leftLength = xyCord + 1;
+                int upLength = xyCord + 1;
+                int rightLength = 32 - leftLength + 1;
+                int downLength = 32 - upLength + 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Up = left
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Down = right
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Right = down
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Left = up
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
+                tempRobotPath = tempRobotPath >> 1;
             }
         }
 

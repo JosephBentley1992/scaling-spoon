@@ -23,6 +23,7 @@ namespace ScalingSpoon.Model
         public DestinationCell CurrentWinningDestination { get; set; }
         private int _robotID = 0;
         public bool AutoSetNextWinningDestination { get; set; } = true;
+        public bool AutoSetRobotPath { get; set; } = false;
 
         public Engine()
         {
@@ -343,6 +344,15 @@ namespace ScalingSpoon.Model
 
                 CreateRobot(xLoc, yLoc);
             }
+
+            foreach (DestinationCell dc in this.WinningDestinations)
+            {
+                dc.MoveHistory.Clear();
+                dc.PoppedHistory.Clear();
+            }
+
+            foreach (Cell cT in this.Board)
+                cT.RobotPath = 0;
         }
 
         private void RemoveCells(Cell cellToRemove, bool removeDiagonals, ref List<Cell> cells)
@@ -526,6 +536,7 @@ namespace ScalingSpoon.Model
                             if (nextLoc.Walls.HasFlag(CellWalls.Down) || nextLoc.RobotID != -1)
                                 break;
 
+                            SetRobotPath(robot, currentLoc, nextLoc, d);
                             currentLoc = nextLoc;
                             move = new RobotMove(robot, initialLoc, currentLoc);
                         }
@@ -543,6 +554,7 @@ namespace ScalingSpoon.Model
                             if (nextLoc.Walls.HasFlag(CellWalls.Left) || nextLoc.RobotID != -1)
                                 break;
 
+                            SetRobotPath(robot, currentLoc, nextLoc, d);
                             currentLoc = nextLoc;
                             move = new RobotMove(robot, initialLoc, currentLoc);
                         }
@@ -560,6 +572,7 @@ namespace ScalingSpoon.Model
                             if (nextLoc.Walls.HasFlag(CellWalls.Up) || nextLoc.RobotID != -1)
                                 break;
 
+                            SetRobotPath(robot, currentLoc, nextLoc, d);
                             currentLoc = nextLoc;
                             move = new RobotMove(robot, initialLoc, currentLoc);
                         }
@@ -577,6 +590,7 @@ namespace ScalingSpoon.Model
                             if (nextLoc.Walls.HasFlag(CellWalls.Right) || nextLoc.RobotID != -1)
                                 break;
 
+                            SetRobotPath(robot, currentLoc, nextLoc, d);
                             currentLoc = nextLoc;
                             move = new RobotMove(robot, initialLoc, currentLoc);
                         }
@@ -599,6 +613,41 @@ namespace ScalingSpoon.Model
                 SetNextWinningDestination();
 
             return moves;
+        }
+
+        /// <summary>
+        /// To draw a path on the board, we need to know the direction each robot enters and leaves every cell during a solution.
+        /// We need to pass all of this information to the UI so the UI can draw it, without doing its own calculations of what cells need to be updated.
+        /// 
+        /// Each cell can be entered and left by each robot in each direction, so up down right left x 4 robots = 16bits.
+        /// </summary>
+        /// <param name="robotId"></param>
+        /// <param name="currentLoc"></param>
+        /// <param name="nextLoc"></param>
+        /// <param name="d"></param>
+        private void SetRobotPath(int robotId, Cell currentLoc, Cell nextLoc, Direction d)
+        {
+            if (!AutoSetRobotPath)
+                return;
+
+            currentLoc.RobotPath = currentLoc.RobotPath | ((int)d << robotId * 4);
+            nextLoc.RobotPath = nextLoc.RobotPath | ((int)GetOppositeDirection(d) << robotId * 4);
+        }
+
+        private Direction GetOppositeDirection(Direction d)
+        {
+            switch (d)
+            {
+                case Direction.Right:
+                    return Direction.Left;
+                case Direction.Left:
+                    return Direction.Right;
+                case Direction.Up:
+                    return Direction.Down;
+                case Direction.Down:
+                    return Direction.Up;
+            }
+            return Direction.Up;
         }
 
         public void SetNextWinningDestination()
