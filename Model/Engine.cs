@@ -511,100 +511,9 @@ namespace ScalingSpoon.Model
         public List<RobotMove> MoveRobot(int robot, params Direction[] directions)
         {
             List<RobotMove> moves = new List<RobotMove>();
-            RobotMove move;
-            Cell initialLoc;
-            Cell currentLoc;
-            Cell nextLoc;
             foreach (Direction d in directions)
             {
-                move = null;
-                initialLoc = this.RobotCurrentLocations[robot];
-                currentLoc = initialLoc;
-                nextLoc = null;
-                switch (d)
-                {
-                    case Direction.Up:
-                        if (initialLoc.Walls.HasFlag(CellWalls.Up) || initialLoc.X == 0)
-                        {
-                            move = null;
-                            continue;
-                        }
-
-                        for (int i = initialLoc.X - 1; i >= 0; i--)
-                        {
-                            nextLoc = this.Board[i, initialLoc.Y];
-                            if (nextLoc.Walls.HasFlag(CellWalls.Down) || nextLoc.RobotID != -1)
-                                break;
-
-                            SetRobotPath(robot, currentLoc, nextLoc, d);
-                            currentLoc = nextLoc;
-                            move = new RobotMove(robot, initialLoc, currentLoc);
-                        }
-                        break;
-                    case Direction.Right:
-                        if (initialLoc.Walls.HasFlag(CellWalls.Right) || initialLoc.Y == Board.GetLength(1) - 1)
-                        {
-                            move = null;
-                            continue;
-                        }
-
-                        for (int i = initialLoc.Y + 1; i <= Board.GetLength(1) - 1; i++)
-                        {
-                            nextLoc = this.Board[initialLoc.X, i];
-                            if (nextLoc.Walls.HasFlag(CellWalls.Left) || nextLoc.RobotID != -1)
-                                break;
-
-                            SetRobotPath(robot, currentLoc, nextLoc, d);
-                            currentLoc = nextLoc;
-                            move = new RobotMove(robot, initialLoc, currentLoc);
-                        }
-                        break;
-                    case Direction.Down:
-                        if (initialLoc.Walls.HasFlag(CellWalls.Down) || initialLoc.X == Board.GetLength(0) - 1)
-                        {
-                            move = null;
-                            continue;
-                        }
-
-                        for (int i = initialLoc.X + 1; i <= Board.GetLength(0) - 1; i++)
-                        {
-                            nextLoc = this.Board[i, initialLoc.Y];
-                            if (nextLoc.Walls.HasFlag(CellWalls.Up) || nextLoc.RobotID != -1)
-                                break;
-
-                            SetRobotPath(robot, currentLoc, nextLoc, d);
-                            currentLoc = nextLoc;
-                            move = new RobotMove(robot, initialLoc, currentLoc);
-                        }
-                        break;
-                    case Direction.Left:
-                        if (initialLoc.Walls.HasFlag(CellWalls.Left) || initialLoc.Y == 0)
-                        {
-                            move = null;
-                            continue;
-                        }
-
-                        for (int i = initialLoc.Y - 1; i >= 0; i--)
-                        {
-                            nextLoc = this.Board[initialLoc.X, i];
-                            if (nextLoc.Walls.HasFlag(CellWalls.Right) || nextLoc.RobotID != -1)
-                                break;
-
-                            SetRobotPath(robot, currentLoc, nextLoc, d);
-                            currentLoc = nextLoc;
-                            move = new RobotMove(robot, initialLoc, currentLoc);
-                        }
-                        break;
-                }
-
-                if (move == null)
-                    return new List<RobotMove>();
-
-                //Update the Robot position
-                this.UpdateRobotPosition(robot, initialLoc, currentLoc);
-
-                this.CurrentWinningDestination.MoveHistory.Push(move);
-
+                RobotMove move = MoveRobotHelper(robot, d);
                 if (move != null)
                     moves.Add(move);
             }
@@ -613,6 +522,95 @@ namespace ScalingSpoon.Model
                 SetNextWinningDestination();
 
             return moves;
+        }
+
+        private RobotMove MoveRobotHelper(int robot, Direction d)
+        {
+            RobotMove move = null;
+            Cell initialLoc = this.RobotCurrentLocations[robot];
+            Cell currentLoc = initialLoc;
+            Cell nextLoc = null;
+
+            if (initialLoc.Walls.HasFlag(GetCellWallFromDirection(d)) || OnEdgeOfBoard(initialLoc, d))
+                return null;
+
+            Direction temp = d;
+            while (move == null)
+            {
+                if (OnEdgeOfBoard(currentLoc, temp))
+                {
+                    move = new RobotMove(robot, initialLoc, currentLoc);
+                    continue;
+                }
+
+                nextLoc = GetAdjacentCell(currentLoc, temp);
+                if (nextLoc.Walls.HasFlag(GetCellWallFromDirection(GetOppositeDirection(temp))) || nextLoc.RobotID != -1)
+                {
+                    move = new RobotMove(robot, initialLoc, currentLoc);
+                    continue;
+                }
+                
+                if (nextLoc.Deflector != null && nextLoc.Deflector.RobotID != robot)
+                    temp = nextLoc.Deflector.GetNewDirection(temp);
+                
+                SetRobotPath(robot, currentLoc, nextLoc, d);
+                currentLoc = nextLoc;
+                continue;
+            }
+
+            //Update the Robot position
+            this.UpdateRobotPosition(robot, initialLoc, currentLoc);
+            this.CurrentWinningDestination.MoveHistory.Push(move);
+
+            return move;
+        }
+
+        private bool OnEdgeOfBoard(Cell c, Direction d)
+        {
+            switch (d)
+            {
+                case Direction.Up:
+                    return c.X == 0;
+                case Direction.Down:
+                    return c.X == Board.GetLength(0) - 1;
+                case Direction.Left:
+                    return c.Y == 0;
+                case Direction.Right:
+                    return c.Y == Board.GetLength(1) - 1;
+            }
+            return false;
+        }
+
+        private Cell GetAdjacentCell(Cell c, Direction d)
+        {
+            switch (d)
+            {
+                case Direction.Up:
+                    return c.X == 0 ? null : Board[c.X - 1, c.Y];
+                case Direction.Down:
+                    return c.X == Board.GetLength(0) - 1 ? null : Board[c.X + 1, c.Y];
+                case Direction.Left:
+                    return c.Y == 0 ? null : Board[c.X, c.Y - 1];
+                case Direction.Right:
+                    return c.Y == Board.GetLength(1) - 1 ? null : Board[c.X, c.Y + 1];
+            }
+            return null;
+        }
+
+        private CellWalls GetCellWallFromDirection(Direction d)
+        {
+            switch (d)
+            {
+                case Direction.Up:
+                    return CellWalls.Up;
+                case Direction.Down:
+                    return CellWalls.Down;
+                case Direction.Left:
+                    return CellWalls.Left;
+                case Direction.Right:
+                    return CellWalls.Right;
+            }
+            return CellWalls.None;
         }
 
         /// <summary>
