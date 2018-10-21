@@ -155,29 +155,31 @@ namespace ScalingSpoon.Model
                     if (possibleWinningDestinations.Count == 0)
                         break;
 
-                    if (availableRows.Count != 0 && availableCols.Count != 0)
-                    {
-                        int x = availableRows[rand.Next(availableRows.Count)];
-                        int y = availableCols[rand.Next(availableCols.Count)];
-                        List<Cell> tempList = possibleWinningDestinations.Where(pwd => pwd.X == x || pwd.Y == y).ToList();
-                        if (tempList.Count == 0)
-                        {
-                            c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
-                        }
-                        else
-                        {
-                            c = tempList[rand.Next(tempList.Count)];
-                            if (c != null)
-                            {
-                                availableRows.Remove(x);
-                                availableCols.Remove(y);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
-                    }
+//                  if (availableRows.Count != 0 && availableCols.Count != 0)
+//                  {
+//                      int x = availableRows[rand.Next(availableRows.Count)];
+//                      int y = availableCols[rand.Next(availableCols.Count)];
+//                      List<Cell> tempList = possibleWinningDestinations.Where(pwd => pwd.X == x || pwd.Y == y).ToList();
+//                      if (tempList.Count == 0)
+//                      {
+//                          c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+//                      }
+//                      else
+//                      {
+//                          c = tempList[rand.Next(tempList.Count)];
+//                          if (c != null)
+//                          {
+//                              availableRows.Remove(x);
+//                              availableCols.Remove(y);
+//                          }
+//                      }
+//                  }
+//                  else
+//                  {
+//                      c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
+//                  }
+
+                    c = possibleWinningDestinations[rand.Next(possibleWinningDestinations.Count)];
 
                     DestinationCell dc = new DestinationCell(c);
 
@@ -330,13 +332,73 @@ namespace ScalingSpoon.Model
             CurrentWinningDestination = WinningDestinations[0];
             CurrentWinningDestination.CurrentWinningCell = true;
 
+            List<Cell> possibleDeflectorLocations = new List<Cell>();
+            for (int x = 1; x <= xLength - 2; x++)
+            {
+                for (int y = 1; y <= yLength - 2; y++)
+                {
+                    if ((x >= 6 && x <= 9) && (y >= 6 && y <= 9))
+                        continue;
+
+                    possibleDeflectorLocations.Add(this.Board[x, y]);
+                }
+            }
+
+            //Deflectors will not spawn adjacent to a winning location, but can spawn diagonally from one.
+            foreach (DestinationCell dc in WinningDestinations)
+            {
+                Cell temp = this.Board[dc.X, dc.Y];
+                RemoveCells(temp, false, ref possibleDeflectorLocations);
+            }
+
+            //Spawn deflectors
+            // * Max 2 per quadrant
+            // * Max 2 per robotId
+            // * Max 4 of each type (/ \)
+
+            quadrants = new List<List<int>>()
+            {
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward }
+            };
+
+            List<int> robotsForDeflectors = new List<int>{ 0, 0, 1, 1, 2, 2, 3, 3 };
+
+            while (robotsForDeflectors.Count != 0)
+            {
+                if (possibleDeflectorLocations.Count == 0)
+                    break;
+                c = possibleDeflectorLocations[rand.Next(possibleDeflectorLocations.Count())];
+                int q = c.GetQuadrant();
+                r = rand.Next(robotsForDeflectors.Count);
+                c.Deflector = new Deflector(robotsForDeflectors[r], (DeflectorType)quadrants[q][0]);
+                robotsForDeflectors.RemoveAt(r);
+                quadrants[q].RemoveAt(0);
+
+                RemoveCells(c, false, ref possibleDeflectorLocations);
+
+                if (quadrants[q].Count == 0)
+                {
+                    List<Cell> cellsToRemove = new List<Cell>();
+                    foreach (Cell d in possibleDeflectorLocations)
+                        if (d.GetQuadrant() == q)
+                            cellsToRemove.Add(d);
+
+                    foreach (Cell d in cellsToRemove)
+                        possibleDeflectorLocations.Remove(d);
+                }
+            }
+
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)
             {
                 int xLoc = rand.Next(xLength);
                 int yLoc = rand.Next(yLength);
                 while (this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
-                    || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9)))
+                    || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9))
+                    || this.Board[xLoc, yLoc].Deflector != null)
                 {
                     xLoc = rand.Next(xLength);
                     yLoc = rand.Next(yLength);
@@ -539,21 +601,22 @@ namespace ScalingSpoon.Model
             {
                 if (OnEdgeOfBoard(currentLoc, temp))
                 {
-                    move = new RobotMove(robot, initialLoc, currentLoc);
+                    move = new RobotMove(robot, initialLoc, currentLoc, d);
                     continue;
                 }
 
                 nextLoc = GetAdjacentCell(currentLoc, temp);
                 if (nextLoc.Walls.HasFlag(GetCellWallFromDirection(GetOppositeDirection(temp))) || nextLoc.RobotID != -1)
                 {
-                    move = new RobotMove(robot, initialLoc, currentLoc);
+                    move = new RobotMove(robot, initialLoc, currentLoc, d);
                     continue;
                 }
-                
+
+                SetRobotPath(robot, currentLoc, nextLoc, temp);
+
                 if (nextLoc.Deflector != null && nextLoc.Deflector.RobotID != robot)
                     temp = nextLoc.Deflector.GetNewDirection(temp);
                 
-                SetRobotPath(robot, currentLoc, nextLoc, d);
                 currentLoc = nextLoc;
                 continue;
             }

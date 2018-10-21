@@ -418,5 +418,69 @@ namespace ScalingSpoonTests
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 4]);
         }
     }
+
+    [TestClass]
+    public class DeflectorMultipleCollisions
+    {
+        private static Engine _model = new Engine();
+        private static Robot _robot;
+        private static Robot _robot2;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            /* a a a a a
+             * b b b b b
+             * c / c \ c
+             * d d d d d
+             * e e e e e
+             */
+            _model = new Engine();
+            _model.Board = new Cell[5, 5];
+
+            int id = 0;
+            for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
+                for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
+
+            _model.Board[2, 1].Deflector = new Deflector(2, DeflectorType.Forward);
+            _model.Board[2, 3].Deflector = new Deflector(3, DeflectorType.Backward);
+        }
+
+        [TestMethod]
+        public void RobotChangesDirectionsTwiceMovingUp()
+        {
+            _robot = _model.CreateRobot(4, 1);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 3]);
+        }
+
+        [TestMethod]
+        public void RobotChangesDirectionsTwiceMovingUp_2()
+        {
+            _robot = _model.CreateRobot(4, 3);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 1]);
+        }
+
+        [TestMethod]
+        public void RobotDeflectsButThenGetsStuckOnDeflector()
+        {
+            _robot = _model.CreateRobot(4, 1);
+            _robot2 = _model.CreateRobot(3, 3);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 3]);
+        }
+
+        [TestMethod]
+        public void RobotDeflectsAndThenPhasesThrough()
+        {
+            _model.Board[2, 3].Deflector.RobotID = 0;
+            _robot = _model.CreateRobot(4, 1);
+            _robot2 = _model.CreateRobot(3, 3);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 4]);
+        }
+    }
 }
 

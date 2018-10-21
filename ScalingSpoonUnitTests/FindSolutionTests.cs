@@ -34,7 +34,7 @@ namespace ScalingSpoonTests
 
             _model.CreateWinningDestination(2, 2, _robot.Id, true);
             _model.CreateWinningDestination(0, 0, _robot.Id, false);
-            List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2]) };
+            List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2], Direction.Right) };
             GameSolverDepthFirst solver = new GameSolverDepthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -77,14 +77,14 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[3, 4]),
-            new RobotMove(_robot.Id, _model.Board[3, 4], _model.Board[3, 0]),
-            new RobotMove(_robot.Id, _model.Board[3, 0], _model.Board[4, 0]),
-            new RobotMove(_robot.Id, _model.Board[4, 0], _model.Board[4, 1]),
-            new RobotMove(_robot.Id, _model.Board[4, 1], _model.Board[0, 1]),
-            new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0]),
-            new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0]),
-            new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3])};
+            { new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[3, 4], Direction.Up),
+            new RobotMove(_robot.Id, _model.Board[3, 4], _model.Board[3, 0], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[3, 0], _model.Board[4, 0], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[4, 0], _model.Board[4, 1], Direction.Right),
+            new RobotMove(_robot.Id, _model.Board[4, 1], _model.Board[0, 1], Direction.Up),
+            new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3], Direction.Right)};
             GameSolverDepthFirst solver = new GameSolverDepthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -128,9 +128,9 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2]),
-            new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
-            new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
+            { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3], Direction.Up) };
             GameSolverDepthFirst solver = new GameSolverDepthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -198,12 +198,12 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[8, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robot.Id, _model.Board[4, 2], _model.Board[0, 2]),
-            new RobotMove(_robotGreen.Id, _model.Board[10, 2], _model.Board[1, 2]),
-            new RobotMove(_robotGreen.Id, _model.Board[1, 2], _model.Board[1, 13]),
-            new RobotMove(_robotGreen.Id, _model.Board[1, 13], _model.Board[5, 13]),
-            new RobotMove(_robotGreen.Id, _model.Board[5, 13], _model.Board[5, 14]),
-            new RobotMove(_robotGreen.Id, _model.Board[5, 14], _model.Board[1, 14]) };
+            { new RobotMove(_robot.Id, _model.Board[4, 2], _model.Board[0, 2], Direction.Up),
+            new RobotMove(_robotGreen.Id, _model.Board[10, 2], _model.Board[1, 2], Direction.Up),
+            new RobotMove(_robotGreen.Id, _model.Board[1, 2], _model.Board[1, 13], Direction.Right),
+            new RobotMove(_robotGreen.Id, _model.Board[1, 13], _model.Board[5, 13], Direction.Down),
+            new RobotMove(_robotGreen.Id, _model.Board[5, 13], _model.Board[5, 14], Direction.Right),
+            new RobotMove(_robotGreen.Id, _model.Board[5, 14], _model.Board[1, 14], Direction.Up) };
             GameSolverDepthFirst solver = new GameSolverDepthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -247,7 +247,7 @@ namespace ScalingSpoonTests
 
             _model.CreateWinningDestination(2, 2, _robot.Id, true);
             _model.CreateWinningDestination(0, 0, _robot.Id, false);
-            List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2]) };
+            List<RobotMove> movesToWin = new List<RobotMove>() { new RobotMove(_robot.Id, _model.Board[2, 1], _model.Board[2, 2], Direction.Right) };
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -290,14 +290,14 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[3, 4]),
-            new RobotMove(_robot.Id, _model.Board[3, 4], _model.Board[3, 0]),
-            new RobotMove(_robot.Id, _model.Board[3, 0], _model.Board[4, 0]),
-            new RobotMove(_robot.Id, _model.Board[4, 0], _model.Board[4, 1]),
-            new RobotMove(_robot.Id, _model.Board[4, 1], _model.Board[0, 1]),
-            new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0]),
-            new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0]),
-            new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3])};
+            { new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[3, 4], Direction.Up),
+            new RobotMove(_robot.Id, _model.Board[3, 4], _model.Board[3, 0], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[3, 0], _model.Board[4, 0], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[4, 0], _model.Board[4, 1], Direction.Right),
+            new RobotMove(_robot.Id, _model.Board[4, 1], _model.Board[0, 1], Direction.Up),
+            new RobotMove(_robot.Id, _model.Board[0, 1], _model.Board[0, 0], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[0, 0], _model.Board[1, 0], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[1, 0], _model.Board[1, 3], Direction.Right)};
 
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
@@ -342,14 +342,12 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[4, 1], Direction.Right);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2]),
-            new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3]),
-            new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3]) };
+            { new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[4, 2], Direction.Down),
+            new RobotMove(_robot.Id, _model.Board[4, 4], _model.Board[4, 3], Direction.Left),
+            new RobotMove(_robot.Id, _model.Board[4, 3], _model.Board[1, 3], Direction.Up) };
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
 
-            System.Diagnostics.Debugger.Launch();
             List<RobotMove> moves = solver.FindSolution();
-
             if (moves.Count < movesToWin.Count)
             {
                 Assert.IsTrue(false);
@@ -414,12 +412,12 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[8, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robotGreen.Id, _model.Board[10, 2], _model.Board[13, 2]),
-            new RobotMove(_robotYellow.Id, _model.Board[14, 1], _model.Board[14, 5]),
-            new RobotMove(_robotYellow.Id, _model.Board[14, 5], _model.Board[13, 5]),
-            new RobotMove(_robotYellow.Id, _model.Board[13, 5], _model.Board[13, 15]),
-            new RobotMove(_robotGreen.Id, _model.Board[13, 2], _model.Board[13, 14]),
-            new RobotMove(_robotGreen.Id, _model.Board[13, 14], _model.Board[1, 14]) };
+            { new RobotMove(_robotGreen.Id, _model.Board[10, 2], _model.Board[13, 2], Direction.Down),
+            new RobotMove(_robotYellow.Id, _model.Board[14, 1], _model.Board[14, 5], Direction.Right),
+            new RobotMove(_robotYellow.Id, _model.Board[14, 5], _model.Board[13, 5], Direction.Up),
+            new RobotMove(_robotYellow.Id, _model.Board[13, 5], _model.Board[13, 15], Direction.Right),
+            new RobotMove(_robotGreen.Id, _model.Board[13, 2], _model.Board[13, 14], Direction.Right),
+            new RobotMove(_robotGreen.Id, _model.Board[13, 14], _model.Board[1, 14], Direction.Up) };
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
 
@@ -487,12 +485,11 @@ namespace ScalingSpoonTests
             _model.CreateCellWall(_model.Board[8, 8], Direction.Up, Direction.Right, Direction.Down, Direction.Left);
 
             List<RobotMove> movesToWin = new List<RobotMove>()
-            { new RobotMove(_robotYellow.Id, _model.Board[4, 2], _model.Board[0, 2]),
-            new RobotMove(_robotGreen.Id, _model.Board[12, 2], _model.Board[1, 2]),
-            new RobotMove(_robotBlue.Id, _model.Board[14, 2], _model.Board[2, 2]),
-            new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[2, 3]) };
+            { new RobotMove(_robotYellow.Id, _model.Board[4, 2], _model.Board[0, 2], Direction.Up),
+            new RobotMove(_robotGreen.Id, _model.Board[12, 2], _model.Board[1, 2], Direction.Up),
+            new RobotMove(_robotBlue.Id, _model.Board[14, 2], _model.Board[2, 2], Direction.Up),
+            new RobotMove(_robotBlue.Id, _model.Board[2, 2], _model.Board[2, 3], Direction.Right) };
 
-            System.Diagnostics.Debugger.Launch();
             GameSolverBreadthFirst solver = new GameSolverBreadthFirst(_model);
             List<RobotMove> moves = solver.FindSolution();
             if (moves.Count < movesToWin.Count)

@@ -153,27 +153,24 @@ namespace ScalingSpoon.View
             txtSolvedNumberOfMoves.Text = movesToWin.Count.ToString();
             foreach (RobotMove move in movesToWin)
             {
-                if (move.GetDirection() == Direction.Up)
+                if (move.Direction == Direction.Up)
                     txtSolutionPath.AppendText("⇦", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Down)
+                if (move.Direction == Direction.Down)
                     txtSolutionPath.AppendText("⇨", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Right)
+                if (move.Direction == Direction.Right)
                     txtSolutionPath.AppendText("⇩", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Left)
+                if (move.Direction == Direction.Left)
                     txtSolutionPath.AppendText("⇧", _robotColors[move.RobotId]);
             }
 
             _model.AutoSetRobotPath = true;
             foreach (RobotMove move in movesToWin)
-            {
-                _model.MoveRobot(move.RobotId, move.GetDirection());
-            }
+                _model.MoveRobot(move.RobotId, move.Direction);
             _model.AutoSetRobotPath = false;
 
             foreach (RobotMove move in movesToWin)
-            {
                 _model.UndoMove();
-            }
+
             Refresh();
         }
 

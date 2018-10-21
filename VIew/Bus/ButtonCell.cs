@@ -98,6 +98,19 @@ namespace ScalingSpoon.View.Bus
                     e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
                 tempRobotPath = tempRobotPath >> 1;
             }
+
+            if (_cell.Deflector != null)
+            {
+                switch (_cell.Deflector.DeflectorType)
+                {
+                    case DeflectorType.Backward:
+                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 0, 32, 32);
+                        break;
+                    case DeflectorType.Forward:
+                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 32, 32, 0);
+                        break;
+                }
+            }
         }
 
         protected override bool IsInputKey(Keys keyData)

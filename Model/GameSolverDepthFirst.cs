@@ -65,7 +65,7 @@ namespace ScalingSpoon.Model
 
             Direction prevDirection = Direction.Up;
             if (prev.Data.Move != null)
-                prevDirection = prev.Data.Move.GetDirection();
+                prevDirection = prev.Data.Move.Direction;
 
             foreach (int i in _robotsByPriority)
             {
