@@ -9,6 +9,7 @@ namespace ScalingSpoon.Model.Bus
         public int Id { get; set; }
         public CellWalls Walls { get; set; } = CellWalls.None;
         public Deflector Deflector { get; set; } = null;
+        public Portal Portal { get; set; } = null;
         public int X { get; set; }
         public int Y { get; set; }
         public int RobotID { get; set; } = -1;

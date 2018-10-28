@@ -391,6 +391,88 @@ namespace ScalingSpoon.Model
                 }
             }
 
+            //Spawn Portals
+            // * Max 2 per quadrant
+            // * Max 2 per robotId
+            List<int> robotsForPortals = new List<int> { 0, 0, 1, 1, 2, 2, 3, 3 };
+            List<Cell> possiblePortalLocations = new List<Cell>();
+            List<Cell> portalLocations = new List<Cell>();
+            quadrants = new List<List<int>>()
+            {
+                new List<int> { 0, 1 },
+                new List<int> { 0, 1 },
+                new List<int> { 0, 1 },
+                new List<int> { 0, 1 }
+            };
+
+            for (int x = 1; x <= xLength - 2; x++)
+            {
+                for (int y = 1; y <= yLength - 2; y++)
+                {
+                    if ((x >= 6 && x <= 9) && (y >= 6 && y <= 9))
+                        continue;
+
+                    possiblePortalLocations.Add(this.Board[x, y]);
+                }
+            }
+
+            //Portals will not spawn adjacent to a winning location, but can spawn diagonally from one.
+            //Portals will not spawn adjacent to a Deflector, but can spawn diagonally from one.
+            foreach (DestinationCell dc in WinningDestinations)
+            {
+                Cell temp = this.Board[dc.X, dc.Y];
+                RemoveCells(temp, false, ref possiblePortalLocations);
+            }
+
+            foreach (Cell c2 in this.Board)
+            {
+                if (c2.Deflector == null)
+                    continue;
+                RemoveCells(c2, false, ref possiblePortalLocations);
+            }
+
+            while (robotsForPortals.Count != 0)
+            {
+                if (possiblePortalLocations.Count == 0)
+                    break;
+
+                c = possiblePortalLocations[rand.Next(possiblePortalLocations.Count())];
+                int q = c.GetQuadrant();
+                r = rand.Next(robotsForPortals.Count);
+                c.Portal = new Portal(robotsForPortals[r], null);
+                robotsForPortals.RemoveAt(r);
+                quadrants[q].RemoveAt(0);
+
+                RemoveCells(c, false, ref possiblePortalLocations);
+
+                if (quadrants[q].Count == 0)
+                {
+                    List<Cell> cellsToRemove = new List<Cell>();
+                    foreach (Cell d in possiblePortalLocations)
+                        if (d.GetQuadrant() == q)
+                            cellsToRemove.Add(d);
+
+                    foreach (Cell d in cellsToRemove)
+                        possiblePortalLocations.Remove(d);
+                }
+
+                portalLocations.Add(c);
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (portalLocations.Where(c2 => c2.Portal.RobotID == i).Count() < 2)
+                    continue;
+
+                Cell entrance = portalLocations.Where(c2 => c2.Portal.RobotID == i).ElementAt(0);
+                Cell exit = portalLocations.Where(c2 => c2.Portal.RobotID == i).ElementAt(1);
+                if (entrance == null || exit == null)
+                    continue;
+
+                entrance.Portal.Exit = exit;
+                exit.Portal.Exit = entrance;
+            }
+
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)
             {
@@ -398,7 +480,8 @@ namespace ScalingSpoon.Model
                 int yLoc = rand.Next(yLength);
                 while (this.RobotCurrentLocations.Any(loc => loc.Value.X == xLoc && loc.Value.Y == yLoc)
                     || ((xLoc >= 6 && xLoc <= 9) || (yLoc >= 6 && yLoc <= 9))
-                    || this.Board[xLoc, yLoc].Deflector != null)
+                    || this.Board[xLoc, yLoc].Deflector != null
+                    || this.Board[xLoc, yLoc].Portal != null)
                 {
                     xLoc = rand.Next(xLength);
                     yLoc = rand.Next(yLength);
@@ -616,7 +699,10 @@ namespace ScalingSpoon.Model
 
                 if (nextLoc.Deflector != null && nextLoc.Deflector.RobotID != robot)
                     temp = nextLoc.Deflector.GetNewDirection(temp);
-                
+
+                if (nextLoc.Portal != null && nextLoc.Portal.RobotID != robot)
+                    nextLoc = nextLoc.Portal.Exit;
+
                 currentLoc = nextLoc;
                 continue;
             }

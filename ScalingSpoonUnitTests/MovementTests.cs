@@ -482,5 +482,189 @@ namespace ScalingSpoonTests
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[2, 4]);
         }
     }
+
+    [TestClass]
+    public class PortalsTeleportRobots
+    {
+        private static Engine _model = new Engine();
+        private static Robot _robot;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            /* a a a a a
+             * b b b 0 b
+             * c c c c c
+             * d 0 d d d
+             * e e e e e
+             */
+            _model = new Engine();
+            _model.Board = new Cell[5, 5];
+
+            int id = 0;
+            for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
+                for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
+
+            _model.Board[3, 1].Portal = new Portal(1, _model.Board[1, 3]);
+            _model.Board[1, 3].Portal = new Portal(1, _model.Board[3, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingUp_Start()
+        {
+            _robot = _model.CreateRobot(4, 1);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 3]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingUp_End()
+        {
+            _robot = _model.CreateRobot(4, 3);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingRight_Start()
+        {
+            _robot = _model.CreateRobot(3, 0);
+            _model.MoveRobot(_robot.Id, Direction.Right);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[1, 4]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingRight_End()
+        {
+            _robot = _model.CreateRobot(1, 0);
+            _model.MoveRobot(_robot.Id, Direction.Right);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[3, 4]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingDown_Start()
+        {
+            _robot = _model.CreateRobot(0, 1);
+            _model.MoveRobot(_robot.Id, Direction.Down);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 3]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingDown_End()
+        {
+            _robot = _model.CreateRobot(0, 3);
+            _model.MoveRobot(_robot.Id, Direction.Down);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingLeft_Start()
+        {
+            _robot = _model.CreateRobot(1, 4);
+            _model.MoveRobot(_robot.Id, Direction.Left);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[3, 0]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingLeft_End()
+        {
+            _robot = _model.CreateRobot(3, 4);
+            _model.MoveRobot(_robot.Id, Direction.Left);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[1, 0]);
+        }
+    }
+
+    [TestClass]
+    public class PortalsRobotsPhaseThrough
+    {
+        private static Engine _model = new Engine();
+        private static Robot _robot;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            /* a a a a a
+             * b b b 0 b
+             * c c c c c
+             * d 0 d d d
+             * e e e e e
+             */
+            _model = new Engine();
+            _model.Board = new Cell[5, 5];
+
+            int id = 0;
+            for (int x = 0; x <= _model.Board.GetLength(0) - 1; x++)
+                for (int y = 0; y <= _model.Board.GetLength(1) - 1; y++)
+                    _model.Board[x, y] = new Cell(id++, CellWalls.None, x, y);
+
+            _model.Board[3, 1].Portal = new Portal(0, _model.Board[1, 3]);
+            _model.Board[1, 3].Portal = new Portal(0, _model.Board[3, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingUp_Start()
+        {
+            _robot = _model.CreateRobot(4, 1);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingUp_End()
+        {
+            _robot = _model.CreateRobot(4, 3);
+            _model.MoveRobot(_robot.Id, Direction.Up);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[0, 3]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingRight_Start()
+        {
+            _robot = _model.CreateRobot(3, 0);
+            _model.MoveRobot(_robot.Id, Direction.Right);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[3, 4]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingRight_End()
+        {
+            _robot = _model.CreateRobot(1, 0);
+            _model.MoveRobot(_robot.Id, Direction.Right);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[1, 4]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingDown_Start()
+        {
+            _robot = _model.CreateRobot(0, 1);
+            _model.MoveRobot(_robot.Id, Direction.Down);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 1]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingDown_End()
+        {
+            _robot = _model.CreateRobot(0, 3);
+            _model.MoveRobot(_robot.Id, Direction.Down);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[4, 3]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingLeft_Start()
+        {
+            _robot = _model.CreateRobot(1, 4);
+            _model.MoveRobot(_robot.Id, Direction.Left);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[1, 0]);
+        }
+
+        [TestMethod]
+        public void PortalTeleportsMovingLeft_End()
+        {
+            _robot = _model.CreateRobot(3, 4);
+            _model.MoveRobot(_robot.Id, Direction.Left);
+            Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[3, 0]);
+        }
+    }
 }
 

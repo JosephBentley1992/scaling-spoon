@@ -111,6 +111,9 @@ namespace ScalingSpoon.View.Bus
                         break;
                 }
             }
+
+            if (_cell.Portal != null)
+                e.Graphics.DrawEllipse(new Pen(_robotColors[_cell.Portal.RobotID]), new Rectangle(12, 0, 8, 32));
         }
 
         protected override bool IsInputKey(Keys keyData)
