@@ -666,5 +666,7 @@ namespace ScalingSpoonTests
             Assert.AreEqual(_model.RobotCurrentLocations[_robot.Id], _model.Board[3, 0]);
         }
     }
+
+    //TODO Test robots stopping on a portal.
 }
 
