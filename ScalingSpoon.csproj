@@ -61,6 +61,7 @@
     <Compile Include="Model\Bus\Robot.cs" />
     <Compile Include="Model\Bus\RobotMove.cs" />
     <Compile Include="Model\Engine.cs" />
+    <Compile Include="Model\EngineBoardCreation.cs" />
     <Compile Include="Model\Enums\CellWalls.cs" />
     <Compile Include="Model\Enums\DeflectorType.cs" />
     <Compile Include="Model\Enums\Direction.cs" />
