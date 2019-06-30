@@ -1,4 +1,5 @@
 ﻿using ScalingSpoon.Model.Bus;
+using ScalingSpoon.Model.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,19 +41,21 @@ namespace ScalingSpoon.View.Bus
             base.OnPaint(e);
 
             //Draw solid box in the middle
-            if (_cell.HasNorthWall && _cell.HasSouthWall && _cell.HasEastWall && _cell.HasWestWall)
+            if (_cell.Walls.HasFlag(CellWalls.Up) && _cell.Walls.HasFlag(CellWalls.Down) && _cell.Walls.HasFlag(CellWalls.Right) && _cell.Walls.HasFlag(CellWalls.Left))
             {
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 32));
                 return;
             }
 
-            if (_cell.HasNorthWall)
+            // -  x
+            // y
+            if (_cell.Walls.HasFlag(CellWalls.Up)) //Up = left wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 3, 32));
-            if (_cell.HasSouthWall)
+            if (_cell.Walls.HasFlag(CellWalls.Down)) //Down = right wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(29, 0, 3, 32));
-            if (_cell.HasEastWall)
+            if (_cell.Walls.HasFlag(CellWalls.Right)) //Right = down wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 29, 32, 3));
-            if (_cell.HasWestWall)
+            if (_cell.Walls.HasFlag(CellWalls.Left)) //Left = Up wall
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 3));
 
             if (_cell.RobotID != -1)
@@ -66,6 +69,51 @@ namespace ScalingSpoon.View.Bus
                 using (Brush b = new SolidBrush(_robotColors[dc.WinningRobotId]))
                     e.Graphics.DrawString("★", f, b, 3, 3);
             }
+
+            //Draw Solved Path onto the board.
+            //Solved Path Lines.png - interesections are separated by a pixel, so they don't overlap on top of each other.
+            // For some reason, the pixels seem to be 1 off when drawing onto the buttons? Not sure. Adding 1 cause them to line up.
+            int tempRobotPath = _cell.RobotPath;
+            for (int i = 0; i < 4; i++)
+            {
+                int xyCord = 12 + (i * 2);
+                int leftLength = xyCord + 1;
+                int upLength = xyCord + 1;
+                int rightLength = 32 - leftLength + 1;
+                int downLength = 32 - upLength + 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Up = left
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Down = right
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Right = down
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
+                tempRobotPath = tempRobotPath >> 1;
+
+                if ((tempRobotPath & 0x1) == 0x1) //Left = up
+                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
+                tempRobotPath = tempRobotPath >> 1;
+            }
+
+            if (_cell.Deflector != null)
+            {
+                switch (_cell.Deflector.DeflectorType)
+                {
+                    case DeflectorType.Backward:
+                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 0, 32, 32);
+                        break;
+                    case DeflectorType.Forward:
+                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 32, 32, 0);
+                        break;
+                }
+            }
+
+            if (_cell.Portal != null)
+                e.Graphics.DrawEllipse(new Pen(_robotColors[_cell.Portal.RobotID]), new Rectangle(12, 0, 8, 32));
         }
 
         protected override bool IsInputKey(Keys keyData)

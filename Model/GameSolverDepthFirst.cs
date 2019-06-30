@@ -21,6 +21,8 @@ namespace ScalingSpoon.Model
         public GameSolverDepthFirst(Engine e)
         {
             _model = e.Copy();
+            _model.AutoSetNextWinningDestination = true;
+            _model.AutoSetRobotPath = true;
         }
 
         public List<RobotMove> FindSolution()
@@ -63,7 +65,7 @@ namespace ScalingSpoon.Model
 
             Direction prevDirection = Direction.Up;
             if (prev.Data.Move != null)
-                prevDirection = prev.Data.Move.GetDirection();
+                prevDirection = prev.Data.Move.Direction;
 
             foreach (int i in _robotsByPriority)
             {

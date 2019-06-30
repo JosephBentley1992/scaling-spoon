@@ -21,6 +21,8 @@ namespace ScalingSpoon.Model
         public GameSolverBreadthFirst(Engine e)
         {
             _model = e.Copy();
+            _model.AutoSetNextWinningDestination = true;
+            _model.AutoSetRobotPath = true;
         }
 
         public List<RobotMove> FindSolution()
@@ -53,6 +55,7 @@ namespace ScalingSpoon.Model
 
             Console.WriteLine(String.Format("Number of nodes evaluated: {0}", _numberOfNodesEvaluated));
             Console.WriteLine(String.Format("Number of Nodes: {0}", _tree.Count));
+
             return movesToWin;
         }
 

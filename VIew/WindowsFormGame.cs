@@ -27,6 +27,22 @@ namespace ScalingSpoon.View
             _robotColors.Add(1, Color.Green);
             _robotColors.Add(2, Color.Purple);
             _robotColors.Add(3, Color.Blue);
+
+            btnRobot0.BackColor = _robotColors[0];
+            btnRobot0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot0.FlatAppearance.BorderSize = 0;
+
+            btnRobot1.BackColor = _robotColors[1];
+            btnRobot1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot1.FlatAppearance.BorderSize = 0;
+
+            btnRobot2.BackColor = _robotColors[2];
+            btnRobot2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot2.FlatAppearance.BorderSize = 0;
+
+            btnRobot3.BackColor = _robotColors[3];
+            btnRobot3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot3.FlatAppearance.BorderSize = 0;
         }
 
         private void WindowsFormGame_Load(object sender, EventArgs e)
@@ -49,7 +65,8 @@ namespace ScalingSpoon.View
             }
 
             _model = new Model.Engine();
-            _model.ConstructBoard(16, 16, 17, 4);
+            _model.ConstructBoard(16, 16, 16, 4);
+            _model.AutoSetNextWinningDestination = false;
             foreach (Cell c in _model.Board)
             {
                 ButtonCell bc = new ButtonCell(c);
@@ -79,6 +96,13 @@ namespace ScalingSpoon.View
 
             txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)8.75);
             txtSolutionPath.Text = sb.ToString();
+        }
+
+        public override void Refresh()
+        {
+            btnNextPosition.Visible = _model.AtWinningDestiation();
+            txtNumberOfMoves.Text = _model.CurrentWinningDestination.MoveHistory.Count().ToString();
+            base.Refresh();
         }
 
         private void ButtonCell_KeyDown(object sender, KeyEventArgs e)
@@ -114,27 +138,84 @@ namespace ScalingSpoon.View
         private void btnSolve_Click(object sender, EventArgs e)
         {
             txtSolutionPath.Clear();
+            foreach (Cell c in _model.Board)
+                c.RobotPath = 0;
+
             txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)42.0);
             List<RobotMove> movesToWin = new GameSolverBreadthFirst(_model).FindSolution();
             if (movesToWin == null || movesToWin.Count == 0)
             {
-                txtNumberOfMoves.Text = ">12";
+                txtSolvedNumberOfMoves.Text = ">12";
                 movesToWin = new GameSolverDepthFirst(_model).FindSolution();
                 if (movesToWin == null || movesToWin.Count == 0)
-                    txtNumberOfMoves.Text = "???";
+                    txtSolvedNumberOfMoves.Text = "???";
             }
-            txtNumberOfMoves.Text = movesToWin.Count.ToString();
+            txtSolvedNumberOfMoves.Text = movesToWin.Count.ToString();
             foreach (RobotMove move in movesToWin)
             {
-                if (move.GetDirection() == Direction.Up)
+                if (move.Direction == Direction.Up)
                     txtSolutionPath.AppendText("⇦", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Down)
+                if (move.Direction == Direction.Down)
                     txtSolutionPath.AppendText("⇨", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Right)
+                if (move.Direction == Direction.Right)
                     txtSolutionPath.AppendText("⇩", _robotColors[move.RobotId]);
-                if (move.GetDirection() == Direction.Left)
+                if (move.Direction == Direction.Left)
                     txtSolutionPath.AppendText("⇧", _robotColors[move.RobotId]);
             }
+
+            _model.AutoSetRobotPath = true;
+            foreach (RobotMove move in movesToWin)
+                _model.MoveRobot(move.RobotId, move.Direction);
+            _model.AutoSetRobotPath = false;
+
+            foreach (RobotMove move in movesToWin)
+                _model.UndoMove();
+
+            Refresh();
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            _model.ResetCurrentWinningPosition();
+            Refresh();
+        }
+
+        private void btnUndoMove_Click(object sender, EventArgs e)
+        {
+            _model.UndoMove();
+            Refresh();
+        }
+
+        private void btnNextPosition_Click(object sender, EventArgs e)
+        {
+            _model.SetNextWinningDestination();
+            txtSolvedNumberOfMoves.Text = String.Empty;
+            txtSolutionPath.Text = String.Empty;
+
+            foreach (Cell c in _model.Board)
+                c.RobotPath = 0;
+
+            Refresh();
+        }
+
+        private void btnRobot0_Click(object sender, EventArgs e)
+        {
+            focusedRobot = 0;
+        }
+
+        private void btnRobot1_Click(object sender, EventArgs e)
+        {
+            focusedRobot = 1;
+        }
+
+        private void btnRobot2_Click(object sender, EventArgs e)
+        {
+            focusedRobot = 2;
+        }
+
+        private void btnRobot3_Click(object sender, EventArgs e)
+        {
+            focusedRobot = 3;
         }
     }
 }

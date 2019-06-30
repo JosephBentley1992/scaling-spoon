@@ -52,13 +52,18 @@
   <ItemGroup>
     <Compile Include="Control\Controller.cs" />
     <Compile Include="Model\Bus\Cell.cs" />
+    <Compile Include="Model\Bus\Deflector.cs" />
     <Compile Include="Model\Bus\DestinationCell.cs" />
     <Compile Include="Model\Bus\Node.cs" />
     <Compile Include="Model\Bus\NodeData.cs" />
     <Compile Include="Model\Bus\ObjectExtensions.cs" />
+    <Compile Include="Model\Bus\Portal.cs" />
     <Compile Include="Model\Bus\Robot.cs" />
     <Compile Include="Model\Bus\RobotMove.cs" />
     <Compile Include="Model\Engine.cs" />
+    <Compile Include="Model\EngineBoardCreation.cs" />
+    <Compile Include="Model\Enums\CellWalls.cs" />
+    <Compile Include="Model\Enums\DeflectorType.cs" />
     <Compile Include="Model\Enums\Direction.cs" />
     <Compile Include="Model\GameSolverBreadthFirst.cs" />
     <Compile Include="Model\GameSolverDepthFirst.cs" />
@@ -132,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\star.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="View\Images\Solved Path Lines.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
