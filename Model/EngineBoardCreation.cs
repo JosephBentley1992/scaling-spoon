@@ -46,7 +46,7 @@ namespace ScalingSpoon.Model
             CreateEdgeWalls(ref possibleWinningDestinations);
             CreateWinningDestinations(destinations, robots, ref possibleWinningDestinations);
             CreateDeflectors(8);
-            CreatePortals(8);
+            //CreatePortals(8);
 
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)
