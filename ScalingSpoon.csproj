@@ -72,7 +72,14 @@
     <Compile Include="View\Bus\ButtonCell.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="View\Bus\GameSettings.cs" />
     <Compile Include="View\Bus\RichTextBoxExtensions.cs" />
+    <Compile Include="View\frmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\frmSettings.Designer.cs">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\WindowsFormGame.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +96,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="View\frmSettings.resx">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\WindowsFormGame.resx">
       <DependentUpon>WindowsFormGame.cs</DependentUpon>
     </EmbeddedResource>

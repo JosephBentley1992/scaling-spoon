@@ -14,28 +14,26 @@ namespace ScalingSpoon.View.Bus
     public class ButtonCell : Button
     {
         private Cell _cell = new Cell();
-        private Dictionary<int, Color> _robotColors = new Dictionary<int, Color>();
+        GameSettings _settings = new GameSettings();
         public ButtonCell()
         {
             
         }
 
-        public ButtonCell(Cell c)
+        public ButtonCell(Cell c, Panel boardContainer, GameSettings settings)
         {
             _cell = c;
+            _settings = settings;
             this.Width = 32;
             this.Height = 32;
-            this.Location = new Point(c.X * 32, c.Y * 32);
-            _robotColors.Add(0, Color.Red);
-            _robotColors.Add(1, Color.Green);
-            _robotColors.Add(2, Color.Purple);
-            _robotColors.Add(3, Color.Blue);
+            this.Location = new Point((c.X * 32) + boardContainer.Location.X, (c.Y * 32) + boardContainer.Location.Y);
         }
 
         public Cell GetCell()
         {
             return _cell;
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -59,14 +57,14 @@ namespace ScalingSpoon.View.Bus
                 e.Graphics.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, 32, 3));
 
             if (_cell.RobotID != -1)
-                e.Graphics.FillEllipse(new SolidBrush(_robotColors[_cell.RobotID]), 6, 6, 20, 20);
+                e.Graphics.FillEllipse(new SolidBrush(_settings.RobotColors[_cell.RobotID]), 6, 6, 20, 20);
 
             DestinationCell dc = _cell as DestinationCell;
             if (dc != null && dc.CurrentWinningCell)
             {
                 //This is the same SalesPad Promotions star character i believe.
                 using (Font f = new Font("Tahoma", 16, FontStyle.Regular))
-                using (Brush b = new SolidBrush(_robotColors[dc.WinningRobotId]))
+                using (Brush b = new SolidBrush(_settings.RobotColors[dc.WinningRobotId]))
                     e.Graphics.DrawString("★", f, b, 3, 3);
             }
 
@@ -83,19 +81,19 @@ namespace ScalingSpoon.View.Bus
                 int downLength = 32 - upLength + 1;
 
                 if ((tempRobotPath & 0x1) == 0x1) //Up = left
-                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
+                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
                 tempRobotPath = tempRobotPath >> 1;
 
                 if ((tempRobotPath & 0x1) == 0x1) //Down = right
-                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
+                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
                 tempRobotPath = tempRobotPath >> 1;
 
                 if ((tempRobotPath & 0x1) == 0x1) //Right = down
-                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
+                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
                 tempRobotPath = tempRobotPath >> 1;
 
                 if ((tempRobotPath & 0x1) == 0x1) //Left = up
-                    e.Graphics.FillRectangle(new SolidBrush(_robotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
+                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
                 tempRobotPath = tempRobotPath >> 1;
             }
 
@@ -104,16 +102,16 @@ namespace ScalingSpoon.View.Bus
                 switch (_cell.Deflector.DeflectorType)
                 {
                     case DeflectorType.Backward:
-                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 0, 32, 32);
+                        e.Graphics.DrawLine(new Pen(_settings.RobotColors[_cell.Deflector.RobotID]), 0, 0, 32, 32);
                         break;
                     case DeflectorType.Forward:
-                        e.Graphics.DrawLine(new Pen(_robotColors[_cell.Deflector.RobotID]), 0, 32, 32, 0);
+                        e.Graphics.DrawLine(new Pen(_settings.RobotColors[_cell.Deflector.RobotID]), 0, 32, 32, 0);
                         break;
                 }
             }
 
             if (_cell.Portal != null)
-                e.Graphics.DrawEllipse(new Pen(_robotColors[_cell.Portal.RobotID]), new Rectangle(12, 0, 8, 32));
+                e.Graphics.DrawEllipse(new Pen(_settings.RobotColors[_cell.Portal.RobotID]), new Rectangle(12, 0, 8, 32));
         }
 
         protected override bool IsInputKey(Keys keyData)

@@ -18,31 +18,21 @@ namespace ScalingSpoon.View
     {
         private Engine _model;
         private int focusedRobot = -1;
-        private Dictionary<int, Color> _robotColors = new Dictionary<int, Color>();
+        private GameSettings _settings = new GameSettings();
 
         public WindowsFormGame()
         {
             InitializeComponent();
-            _robotColors.Add(0, Color.Red);
-            _robotColors.Add(1, Color.Green);
-            _robotColors.Add(2, Color.Purple);
-            _robotColors.Add(3, Color.Blue);
-
-            btnRobot0.BackColor = _robotColors[0];
-            btnRobot0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnRobot0.FlatAppearance.BorderSize = 0;
-
-            btnRobot1.BackColor = _robotColors[1];
-            btnRobot1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnRobot1.FlatAppearance.BorderSize = 0;
-
-            btnRobot2.BackColor = _robotColors[2];
-            btnRobot2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnRobot2.FlatAppearance.BorderSize = 0;
-
-            btnRobot3.BackColor = _robotColors[3];
-            btnRobot3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnRobot3.FlatAppearance.BorderSize = 0;
+            _settings = new GameSettings();
+            _settings.DeflectorCount = 0;
+            _settings.PortalCount = 0;
+            _settings.RobotColors = new Dictionary<int, Color>()
+            {
+                { 0, Color.Red },
+                { 1, Color.Green },
+                { 2, Color.Purple },
+                { 3, Color.Blue }
+            };
         }
 
         private void WindowsFormGame_Load(object sender, EventArgs e)
@@ -65,11 +55,11 @@ namespace ScalingSpoon.View
             }
 
             _model = new Model.Engine();
-            _model.ConstructBoard(16, 16, 16, 4);
+            _model.ConstructBoard(16, 16, 16, 4, _settings.DeflectorCount, _settings.PortalCount);
             _model.AutoSetNextWinningDestination = false;
             foreach (Cell c in _model.Board)
             {
-                ButtonCell bc = new ButtonCell(c);
+                ButtonCell bc = new ButtonCell(c, boardLocation, _settings);
                 bc.Click += ButtonCell_Click;
                 bc.KeyDown += ButtonCell_KeyDown;
                 this.Controls.Add(bc);
@@ -96,6 +86,22 @@ namespace ScalingSpoon.View
 
             txtSolutionPath.Font = new Font(txtSolutionPath.Font.FontFamily, (float)8.75);
             txtSolutionPath.Text = sb.ToString();
+
+            btnRobot0.BackColor = _settings.RobotColors[0];
+            btnRobot0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot0.FlatAppearance.BorderSize = 0;
+
+            btnRobot1.BackColor = _settings.RobotColors[1];
+            btnRobot1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot1.FlatAppearance.BorderSize = 0;
+
+            btnRobot2.BackColor = _settings.RobotColors[2];
+            btnRobot2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot2.FlatAppearance.BorderSize = 0;
+
+            btnRobot3.BackColor = _settings.RobotColors[3];
+            btnRobot3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnRobot3.FlatAppearance.BorderSize = 0;
         }
 
         public override void Refresh()
@@ -129,11 +135,6 @@ namespace ScalingSpoon.View
                 focusedRobot = cell.GetCell().RobotID;
         }
 
-        private void btnNewGame_Click(object sender, EventArgs e)
-        {
-            NewGame();
-            Refresh();
-        }
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
@@ -154,13 +155,13 @@ namespace ScalingSpoon.View
             foreach (RobotMove move in movesToWin)
             {
                 if (move.Direction == Direction.Up)
-                    txtSolutionPath.AppendText("⇦", _robotColors[move.RobotId]);
+                    txtSolutionPath.AppendText("⇦", _settings.RobotColors[move.RobotId]);
                 if (move.Direction == Direction.Down)
-                    txtSolutionPath.AppendText("⇨", _robotColors[move.RobotId]);
+                    txtSolutionPath.AppendText("⇨", _settings.RobotColors[move.RobotId]);
                 if (move.Direction == Direction.Right)
-                    txtSolutionPath.AppendText("⇩", _robotColors[move.RobotId]);
+                    txtSolutionPath.AppendText("⇩", _settings.RobotColors[move.RobotId]);
                 if (move.Direction == Direction.Left)
-                    txtSolutionPath.AppendText("⇧", _robotColors[move.RobotId]);
+                    txtSolutionPath.AppendText("⇧", _settings.RobotColors[move.RobotId]);
             }
 
             _model.AutoSetRobotPath = true;
@@ -216,6 +217,28 @@ namespace ScalingSpoon.View
         private void btnRobot3_Click(object sender, EventArgs e)
         {
             focusedRobot = 3;
+        }
+        
+
+        private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewGame();
+            Refresh();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var form = new frmSettings(_settings))
+            {
+                var result = form.ShowDialog();
+                if (result == DialogResult.OK)
+                    this.NewGame();
+            }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO
         }
     }
 }

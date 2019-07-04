@@ -64,10 +64,10 @@ namespace ScalingSpoon.Model.Bus
                 return 0;
 
             int index = 0;
-            for (int i = 0; i < this.Data.CurrentRobotLocations.Count; i++)
+            foreach (KeyValuePair<int, Cell> loc in this.Data.CurrentRobotLocations)
             {
-                index = index | (this.Data.CurrentRobotLocations[i].X << (((i + 1) * 8) - 4));
-                index = index | (this.Data.CurrentRobotLocations[i].Y << (i * 8));
+                index = index | (loc.Value.X << (((loc.Key + 1) * 8) - 4));
+                index = index | (loc.Value.Y << (loc.Key * 8));
             }
             return index;
         }

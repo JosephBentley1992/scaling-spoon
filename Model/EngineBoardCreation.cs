@@ -21,7 +21,7 @@ namespace ScalingSpoon.Model
         /// <param name="y"></param>
         /// <param name="destinations"></param>
         /// <param name="robots"></param>
-        public void ConstructBoard(int xDimension, int yDimension, int destinations, int robots)
+        public void ConstructBoard(int xDimension, int yDimension, int destinations, int robots, int deflectors, int portals)
         {
             CreateBoardDefaults(xDimension, yDimension);
 
@@ -45,8 +45,8 @@ namespace ScalingSpoon.Model
 
             CreateEdgeWalls(ref possibleWinningDestinations);
             CreateWinningDestinations(destinations, robots, ref possibleWinningDestinations);
-            CreateDeflectors(8);
-            //CreatePortals(8);
+            CreateDeflectors(deflectors);
+            CreatePortals(portals);
 
             //Create the last x (3) robots
             for (int i = 1; i < robots; i++)

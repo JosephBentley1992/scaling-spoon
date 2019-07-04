@@ -13,7 +13,7 @@ namespace ScalingSpoon.Control
 
         public void StartDefaultGame()
         {
-            _model.ConstructBoard(16, 16, 16, 4);
+            _model.ConstructBoard(16, 16, 16, 4, 0, 0);
         }
     }
 }

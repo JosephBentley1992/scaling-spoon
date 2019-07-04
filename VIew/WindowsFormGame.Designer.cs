@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnNewGame = new System.Windows.Forms.Button();
             this.btnSolve = new System.Windows.Forms.Button();
             this.txtSolutionPath = new System.Windows.Forms.RichTextBox();
             this.boardLocation = new System.Windows.Forms.FlowLayoutPanel();
@@ -41,17 +40,13 @@
             this.btnRobot2 = new System.Windows.Forms.Button();
             this.btnRobot3 = new System.Windows.Forms.Button();
             this.txtSolvedNumberOfMoves = new System.Windows.Forms.TextBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnNewGame
-            // 
-            this.btnNewGame.Location = new System.Drawing.Point(528, 12);
-            this.btnNewGame.Name = "btnNewGame";
-            this.btnNewGame.Size = new System.Drawing.Size(75, 23);
-            this.btnNewGame.TabIndex = 1;
-            this.btnNewGame.Text = "New Game";
-            this.btnNewGame.UseVisualStyleBackColor = true;
-            this.btnNewGame.Click += new System.EventHandler(this.btnNewGame_Click);
             // 
             // btnSolve
             // 
@@ -68,13 +63,13 @@
             this.txtSolutionPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSolutionPath.Location = new System.Drawing.Point(528, 111);
             this.txtSolutionPath.Name = "txtSolutionPath";
-            this.txtSolutionPath.Size = new System.Drawing.Size(221, 399);
+            this.txtSolutionPath.Size = new System.Drawing.Size(221, 425);
             this.txtSolutionPath.TabIndex = 4;
             this.txtSolutionPath.Text = "";
             // 
             // boardLocation
             // 
-            this.boardLocation.Location = new System.Drawing.Point(2, 1);
+            this.boardLocation.Location = new System.Drawing.Point(0, 27);
             this.boardLocation.Name = "boardLocation";
             this.boardLocation.Size = new System.Drawing.Size(520, 509);
             this.boardLocation.TabIndex = 5;
@@ -82,7 +77,7 @@
             // 
             // txtNumberOfMoves
             // 
-            this.txtNumberOfMoves.Location = new System.Drawing.Point(609, 15);
+            this.txtNumberOfMoves.Location = new System.Drawing.Point(528, 27);
             this.txtNumberOfMoves.Name = "txtNumberOfMoves";
             this.txtNumberOfMoves.Size = new System.Drawing.Size(58, 20);
             this.txtNumberOfMoves.TabIndex = 6;
@@ -120,6 +115,8 @@
             // 
             // btnRobot0
             // 
+            this.btnRobot0.FlatAppearance.BorderSize = 0;
+            this.btnRobot0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRobot0.Location = new System.Drawing.Point(528, 53);
             this.btnRobot0.Name = "btnRobot0";
             this.btnRobot0.Size = new System.Drawing.Size(51, 23);
@@ -127,9 +124,13 @@
             this.btnRobot0.UseVisualStyleBackColor = true;
             this.btnRobot0.Click += new System.EventHandler(this.btnRobot0_Click);
             this.btnRobot0.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ButtonCell_KeyDown);
+
+
             // 
             // btnRobot1
             // 
+            this.btnRobot1.FlatAppearance.BorderSize = 0;
+            this.btnRobot1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRobot1.Location = new System.Drawing.Point(585, 53);
             this.btnRobot1.Name = "btnRobot1";
             this.btnRobot1.Size = new System.Drawing.Size(51, 23);
@@ -140,6 +141,8 @@
             // 
             // btnRobot2
             // 
+            this.btnRobot2.FlatAppearance.BorderSize = 0;
+            this.btnRobot2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRobot2.Location = new System.Drawing.Point(642, 53);
             this.btnRobot2.Name = "btnRobot2";
             this.btnRobot2.Size = new System.Drawing.Size(51, 23);
@@ -150,6 +153,8 @@
             // 
             // btnRobot3
             // 
+            this.btnRobot3.FlatAppearance.BorderSize = 0;
+            this.btnRobot3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRobot3.Location = new System.Drawing.Point(698, 53);
             this.btnRobot3.Name = "btnRobot3";
             this.btnRobot3.Size = new System.Drawing.Size(51, 23);
@@ -160,16 +165,57 @@
             // 
             // txtSolvedNumberOfMoves
             // 
-            this.txtSolvedNumberOfMoves.Location = new System.Drawing.Point(673, 15);
+            this.txtSolvedNumberOfMoves.Location = new System.Drawing.Point(592, 27);
             this.txtSolvedNumberOfMoves.Name = "txtSolvedNumberOfMoves";
             this.txtSolvedNumberOfMoves.Size = new System.Drawing.Size(58, 20);
             this.txtSolvedNumberOfMoves.TabIndex = 14;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(761, 24);
+            this.menuStrip1.TabIndex = 15;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newGameToolStripMenuItem,
+            this.settingsToolStripMenuItem,
+            this.exportToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newGameToolStripMenuItem
+            // 
+            this.newGameToolStripMenuItem.Name = "newGameToolStripMenuItem";
+            this.newGameToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.newGameToolStripMenuItem.Text = "New Game";
+            this.newGameToolStripMenuItem.Click += new System.EventHandler(this.newGameToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.exportToolStripMenuItem.Text = "Export (TODO)";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // WindowsFormGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 515);
+            this.ClientSize = new System.Drawing.Size(761, 543);
             this.Controls.Add(this.txtSolvedNumberOfMoves);
             this.Controls.Add(this.btnRobot3);
             this.Controls.Add(this.btnRobot2);
@@ -181,18 +227,20 @@
             this.Controls.Add(this.txtNumberOfMoves);
             this.Controls.Add(this.txtSolutionPath);
             this.Controls.Add(this.btnSolve);
-            this.Controls.Add(this.btnNewGame);
             this.Controls.Add(this.boardLocation);
+            this.Controls.Add(this.menuStrip1);
             this.Name = "WindowsFormGame";
-            this.Text = "WindowsFormGame";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Scaling Spoon";
             this.Load += new System.EventHandler(this.WindowsFormGame_Load);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnNewGame;
         private System.Windows.Forms.Button btnSolve;
         private System.Windows.Forms.RichTextBox txtSolutionPath;
         private System.Windows.Forms.FlowLayoutPanel boardLocation;
@@ -205,5 +253,10 @@
         private System.Windows.Forms.Button btnRobot2;
         private System.Windows.Forms.Button btnRobot3;
         private System.Windows.Forms.TextBox txtSolvedNumberOfMoves;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newGameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
     }
 }
