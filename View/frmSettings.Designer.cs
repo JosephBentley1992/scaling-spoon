@@ -149,6 +149,11 @@
             // 
             // nudPortalCount
             // 
+            this.nudPortalCount.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
             this.nudPortalCount.Location = new System.Drawing.Point(135, 169);
             this.nudPortalCount.Maximum = new decimal(new int[] {
             8,

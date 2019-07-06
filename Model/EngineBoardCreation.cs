@@ -337,11 +337,50 @@ namespace ScalingSpoon.Model
 
         private void CreateDeflectors(int deflectors)
         {
-            Random rand = new Random();
+            if (deflectors <= 0)
+                return;
+
+            deflectors = Math.Min(deflectors, 8);
+
             int xLength = this.Board.GetLength(0);
             int yLength = this.Board.GetLength(1);
+
+            //Spawn deflectors
+            // * Max 2 per quadrant
+            // * Max 2 per robotId
+            // * Max 4 of each type (/ \)
+            List<List<int>> quadrants = new List<List<int>>()
+            {
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
+                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward }
+            };
+            List<int> robotsForDeflectors = new List<int> { 0, 0, 1, 1, 2, 2, 3, 3 };
+
+            Random rand = new Random();
             int r;
-            Cell c;
+            int r2;
+
+            //remove [differential] amount of deflectors, randomly.
+            for (int i = 0; i < (8 - deflectors); i++)
+            {
+                r = rand.Next(4);
+                r2 = rand.Next(2);
+                if (quadrants[r].Count > 1)
+                    quadrants[r].RemoveAt(r2);
+                else if (quadrants[r].Count == 1)
+                    quadrants[r].RemoveAt(0);
+                else
+                    i--;
+            }
+
+            //Remove random robots
+            for (int i = 0; i < (8 - deflectors); i++)
+            {
+                r = rand.Next(robotsForDeflectors.Count);
+                robotsForDeflectors.RemoveAt(r);
+            }
 
             List<Cell> possibleDeflectorLocations = new List<Cell>();
             for (int x = 1; x <= xLength - 2; x++)
@@ -349,6 +388,9 @@ namespace ScalingSpoon.Model
                 for (int y = 1; y <= yLength - 2; y++)
                 {
                     if ((x >= 6 && x <= 9) && (y >= 6 && y <= 9))
+                        continue;
+
+                    if (quadrants[this.Board[x, y].GetQuadrant()].Count == 0)
                         continue;
 
                     possibleDeflectorLocations.Add(this.Board[x, y]);
@@ -362,61 +404,61 @@ namespace ScalingSpoon.Model
                 RemoveCells(temp, false, ref possibleDeflectorLocations);
             }
 
-            //Spawn deflectors
-            // * Max 2 per quadrant
-            // * Max 2 per robotId
-            // * Max 4 of each type (/ \)
+            CreateDeflectors(possibleDeflectorLocations, robotsForDeflectors, quadrants);
+        }
 
-            List<List<int>> quadrants = new List<List<int>>()
+        private void CreateDeflectors(List<Cell> locations, List<int> robots, List<List<int>> quadrants)
+        {
+            Random rand = new Random();
+            int r;
+            Cell c;
+            while (robots.Count != 0)
             {
-                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
-                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
-                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward },
-                new List<int> {(int)DeflectorType.Backward, (int)DeflectorType.Forward }
-            };
-
-            List<int> robotsForDeflectors = new List<int> { 0, 0, 1, 1, 2, 2, 3, 3 };
-
-            while (robotsForDeflectors.Count != 0)
-            {
-                if (possibleDeflectorLocations.Count == 0)
+                if (locations.Count == 0)
                     break;
-                c = possibleDeflectorLocations[rand.Next(possibleDeflectorLocations.Count())];
+
+                c = locations[rand.Next(locations.Count())];
                 int q = c.GetQuadrant();
-                r = rand.Next(robotsForDeflectors.Count);
-                c.Deflector = new Deflector(robotsForDeflectors[r], (DeflectorType)quadrants[q][0]);
-                robotsForDeflectors.RemoveAt(r);
+                r = rand.Next(robots.Count);
+                c.Deflector = new Deflector(robots[r], (DeflectorType)quadrants[q][0]);
+                robots.RemoveAt(r);
                 quadrants[q].RemoveAt(0);
 
-                RemoveCells(c, false, ref possibleDeflectorLocations);
+                RemoveCells(c, false, ref locations);
 
                 if (quadrants[q].Count == 0)
                 {
                     List<Cell> cellsToRemove = new List<Cell>();
-                    foreach (Cell d in possibleDeflectorLocations)
+                    foreach (Cell d in locations)
                         if (d.GetQuadrant() == q)
                             cellsToRemove.Add(d);
 
                     foreach (Cell d in cellsToRemove)
-                        possibleDeflectorLocations.Remove(d);
+                        locations.Remove(d);
                 }
             }
         }
 
         private void CreatePortals(int portals)
         {
-            Random rand = new Random();
+            if (portals <= 0)
+                return;
+
+            portals = Math.Min(portals, 4);
+
             int xLength = this.Board.GetLength(0);
             int yLength = this.Board.GetLength(1);
+            Random rand = new Random();
             int r;
-            Cell c;
+            int r2;
+            int robot;
 
             //Spawn Portals
             // * Max 2 per quadrant
             // * Max 2 per robotId
-            List<int> robotsForPortals = new List<int> { 0, 0, 1, 1, 2, 2, 3, 3 };
+            List<int> initialRobots = new List<int> { 0, 1, 2, 3 };
+            List<int> robotsForPortals = new List<int> { };
             List<Cell> possiblePortalLocations = new List<Cell>();
-            List<Cell> portalLocations = new List<Cell>();
             List<List<int>> quadrants = new List<List<int>>()
             {
                 new List<int> { 0, 1 },
@@ -425,6 +467,29 @@ namespace ScalingSpoon.Model
                 new List<int> { 0, 1 }
             };
 
+            //Create the robot pairs for the portals
+            for (int i = 0; i < portals; i++)
+            {
+                r = rand.Next(initialRobots.Count);
+                robot = initialRobots[r];
+                initialRobots.RemoveAt(r);
+                robotsForPortals.Add(robot);
+                robotsForPortals.Add(robot);
+            }
+
+            //Remove random quadrants.
+            for (int i = 0; i < (8 - (portals * 2)); i++)
+            {
+                r = rand.Next(4);
+                r2 = rand.Next(2);
+                if (quadrants[r].Count > 1)
+                    quadrants[r].RemoveAt(r2);
+                else if (quadrants[r].Count == 1)
+                    quadrants[r].RemoveAt(0);
+                else
+                    i--;
+            }
+            
             for (int x = 1; x <= xLength - 2; x++)
             {
                 for (int y = 1; y <= yLength - 2; y++)
@@ -432,48 +497,61 @@ namespace ScalingSpoon.Model
                     if ((x >= 6 && x <= 9) && (y >= 6 && y <= 9))
                         continue;
 
+                    if (quadrants[this.Board[x, y].GetQuadrant()].Count == 0)
+                        continue;
+
                     possiblePortalLocations.Add(this.Board[x, y]);
                 }
             }
 
             //Portals will not spawn adjacent to a winning location, but can spawn diagonally from one.
-            //Portals will not spawn adjacent to a Deflector, but can spawn diagonally from one.
             foreach (DestinationCell dc in WinningDestinations)
             {
                 Cell temp = this.Board[dc.X, dc.Y];
                 RemoveCells(temp, false, ref possiblePortalLocations);
             }
 
+            //Portals will not spawn adjacent to a Deflector, but can spawn diagonally from one.
             foreach (Cell c2 in this.Board)
             {
                 if (c2.Deflector == null)
                     continue;
+
                 RemoveCells(c2, false, ref possiblePortalLocations);
             }
 
-            while (robotsForPortals.Count != 0)
+            CreatePortals(possiblePortalLocations, robotsForPortals, quadrants);
+        }
+
+        private void CreatePortals(List<Cell> locations, List<int> robots, List<List<int>> quadrants)
+        {
+            List<Cell> portalLocations = new List<Cell>();
+            Random rand = new Random();
+            int r;
+            Cell c;
+            while (robots.Count != 0)
             {
-                if (possiblePortalLocations.Count == 0)
+                if (locations.Count == 0)
                     break;
 
-                c = possiblePortalLocations[rand.Next(possiblePortalLocations.Count())];
+                c = locations[rand.Next(locations.Count())];
                 int q = c.GetQuadrant();
-                r = rand.Next(robotsForPortals.Count);
-                c.Portal = new Portal(robotsForPortals[r], null);
-                robotsForPortals.RemoveAt(r);
+                r = rand.Next(robots.Count);
+                c.Portal = new Portal(robots[r], null);
+                robots.RemoveAt(r);
                 quadrants[q].RemoveAt(0);
 
-                RemoveCells(c, false, ref possiblePortalLocations);
+                RemoveCells(c, false, ref locations);
 
                 if (quadrants[q].Count == 0)
                 {
                     List<Cell> cellsToRemove = new List<Cell>();
-                    foreach (Cell d in possiblePortalLocations)
+                    foreach (Cell d in locations)
                         if (d.GetQuadrant() == q)
                             cellsToRemove.Add(d);
 
                     foreach (Cell d in cellsToRemove)
-                        possiblePortalLocations.Remove(d);
+                        locations.Remove(d);
                 }
 
                 portalLocations.Add(c);

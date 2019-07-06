@@ -55,7 +55,7 @@ namespace ScalingSpoon.View
             }
 
             _model = new Model.Engine();
-            _model.ConstructBoard(16, 16, 16, 4, _settings.DeflectorCount, _settings.PortalCount);
+            _model.ConstructBoard(16, 16, 16, 4, _settings.DeflectorCount, _settings.PortalCount / 2);
             _model.AutoSetNextWinningDestination = false;
             foreach (Cell c in _model.Board)
             {
