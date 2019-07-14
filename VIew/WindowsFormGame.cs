@@ -70,10 +70,10 @@ namespace ScalingSpoon.View
             int x2 = _model.WinningDestinations.GroupBy(c => c.X).Select(c => c.Count()).Count(c => c == 2);
             int y1 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 1);
             int y2 = _model.WinningDestinations.GroupBy(c => c.Y).Select(c => c.Count()).Count(c => c == 2);
-            int q1 = _model.WinningDestinations.Count(c => c.X > 0 && c.X < 8 && c.Y > 0 && c.Y < 8);
-            int q2 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y > 0 && c.Y < 8);
-            int q3 = _model.WinningDestinations.Count(c => c.X > 0 && c.X < 8 && c.Y >= 8 && c.Y < 15);
-            int q4 = _model.WinningDestinations.Count(c => c.X >= 8 && c.X < 15 && c.Y >= 8 && c.Y < 15);
+            int q1 = _model.WinningDestinations.Count(c => c.GetQuadrant() == 0);
+            int q2 = _model.WinningDestinations.Count(c => c.GetQuadrant() == 1);
+            int q3 = _model.WinningDestinations.Count(c => c.GetQuadrant() == 2);
+            int q4 = _model.WinningDestinations.Count(c => c.GetQuadrant() == 3);
 
             sb.AppendLine(String.Format("Blank rows: {0}", 16 - x2 - x1 - 2));
             sb.AppendLine(String.Format("2 rows: {0}", x2));
@@ -172,6 +172,7 @@ namespace ScalingSpoon.View
             foreach (RobotMove move in movesToWin)
                 _model.UndoMove();
 
+            cbShowpath.Checked = _settings.ShowSolvedPath = true;
             Refresh();
         }
 
@@ -239,6 +240,12 @@ namespace ScalingSpoon.View
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //TODO
+        }
+
+        private void cbShowpath_CheckedChanged(object sender, EventArgs e)
+        {
+            _settings.ShowSolvedPath = cbShowpath.Checked;
+            Refresh();
         }
     }
 }

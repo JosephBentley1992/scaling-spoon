@@ -45,6 +45,7 @@
             this.newGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbShowpath = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -124,8 +125,6 @@
             this.btnRobot0.UseVisualStyleBackColor = true;
             this.btnRobot0.Click += new System.EventHandler(this.btnRobot0_Click);
             this.btnRobot0.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ButtonCell_KeyDown);
-
-
             // 
             // btnRobot1
             // 
@@ -211,11 +210,23 @@
             this.exportToolStripMenuItem.Text = "Export (TODO)";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
+            // cbShowpath
+            // 
+            this.cbShowpath.AutoSize = true;
+            this.cbShowpath.Location = new System.Drawing.Point(656, 27);
+            this.cbShowpath.Name = "cbShowpath";
+            this.cbShowpath.Size = new System.Drawing.Size(78, 17);
+            this.cbShowpath.TabIndex = 16;
+            this.cbShowpath.Text = "Show Path";
+            this.cbShowpath.UseVisualStyleBackColor = true;
+            this.cbShowpath.CheckedChanged += new System.EventHandler(this.cbShowpath_CheckedChanged);
+            // 
             // WindowsFormGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(761, 543);
+            this.Controls.Add(this.cbShowpath);
             this.Controls.Add(this.txtSolvedNumberOfMoves);
             this.Controls.Add(this.btnRobot3);
             this.Controls.Add(this.btnRobot2);
@@ -258,5 +269,6 @@
         private System.Windows.Forms.ToolStripMenuItem newGameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.CheckBox cbShowpath;
     }
 }

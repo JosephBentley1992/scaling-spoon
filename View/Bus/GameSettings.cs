@@ -12,5 +12,6 @@ namespace ScalingSpoon.View.Bus
         public Dictionary<int, Color> RobotColors { get; set; }
         public int DeflectorCount { get; set; }
         public int PortalCount { get; set; }
+        public bool ShowSolvedPath { get; set; } = false;
     }
 }

@@ -71,30 +71,33 @@ namespace ScalingSpoon.View.Bus
             //Draw Solved Path onto the board.
             //Solved Path Lines.png - interesections are separated by a pixel, so they don't overlap on top of each other.
             // For some reason, the pixels seem to be 1 off when drawing onto the buttons? Not sure. Adding 1 cause them to line up.
-            int tempRobotPath = _cell.RobotPath;
-            for (int i = 0; i < 4; i++)
+            if (_settings.ShowSolvedPath)
             {
-                int xyCord = 12 + (i * 2);
-                int leftLength = xyCord + 1;
-                int upLength = xyCord + 1;
-                int rightLength = 32 - leftLength + 1;
-                int downLength = 32 - upLength + 1;
+                int tempRobotPath = _cell.RobotPath;
+                for (int i = 0; i < 4; i++)
+                {
+                    int xyCord = 12 + (i * 2);
+                    int leftLength = xyCord + 1;
+                    int upLength = xyCord + 1;
+                    int rightLength = 32 - leftLength + 1;
+                    int downLength = 32 - upLength + 1;
 
-                if ((tempRobotPath & 0x1) == 0x1) //Up = left
-                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
-                tempRobotPath = tempRobotPath >> 1;
+                    if ((tempRobotPath & 0x1) == 0x1) //Up = left
+                        e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(0, xyCord, leftLength, 1));
+                    tempRobotPath = tempRobotPath >> 1;
 
-                if ((tempRobotPath & 0x1) == 0x1) //Down = right
-                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
-                tempRobotPath = tempRobotPath >> 1;
+                    if ((tempRobotPath & 0x1) == 0x1) //Down = right
+                        e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, rightLength, 1));
+                    tempRobotPath = tempRobotPath >> 1;
 
-                if ((tempRobotPath & 0x1) == 0x1) //Right = down
-                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
-                tempRobotPath = tempRobotPath >> 1;
+                    if ((tempRobotPath & 0x1) == 0x1) //Right = down
+                        e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, xyCord, 1, downLength));
+                    tempRobotPath = tempRobotPath >> 1;
 
-                if ((tempRobotPath & 0x1) == 0x1) //Left = up
-                    e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
-                tempRobotPath = tempRobotPath >> 1;
+                    if ((tempRobotPath & 0x1) == 0x1) //Left = up
+                        e.Graphics.FillRectangle(new SolidBrush(_settings.RobotColors[i]), new Rectangle(xyCord, 0, 1, upLength));
+                    tempRobotPath = tempRobotPath >> 1;
+                }
             }
 
             if (_cell.Deflector != null)
