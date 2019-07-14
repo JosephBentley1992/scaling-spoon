@@ -609,5 +609,115 @@ namespace ScalingSpoon.Model
                     cells.Remove(cell);
             }
         }
+
+        private bool CheckForLoops(DestinationCell d)
+        {
+            return CheckBoardTraversal();
+            //return CheckSimpleLoop(d);
+        }
+
+        private bool CheckSimpleLoop(DestinationCell d)
+        {
+            List<DestinationCell> cellsToCheck = new List<DestinationCell>();
+            cellsToCheck.AddRange(WinningDestinations);
+            cellsToCheck.Add(d);
+
+            foreach (DestinationCell dc in cellsToCheck)
+            {
+                int originalX = dc.X;
+                int originalY = dc.Y;
+                Dictionary<CellWalls, List<Direction>> loops = new Dictionary<CellWalls, List<Direction>>()
+                {
+                    {CellWalls.DownAndLeft, new List<Direction>() { Direction.Up, Direction.Right, Direction.Down, Direction.Left, Direction.Right, Direction.Up, Direction.Left, Direction.Down} },
+                    {CellWalls.LeftAndUp, new List<Direction>() {Direction.Down, Direction.Right, Direction.Up, Direction.Left, Direction.Right, Direction.Down, Direction.Left, Direction.Up } },
+                    {CellWalls.UpAndRight, new List<Direction>() {Direction.Left, Direction.Down, Direction.Right, Direction.Up, Direction.Down, Direction.Left, Direction.Up, Direction.Right } },
+                    {CellWalls.RightAndDown, new List<Direction>() {Direction.Up, Direction.Left, Direction.Down, Direction.Right, Direction.Left, Direction.Up, Direction.Right, Direction.Down } }
+                };
+
+                int i = 0;
+                for (int y = 0; y < 2; y++)
+                {
+                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], dc);
+                    this.MoveRobot(0, loops[dc.Walls][i++]);
+                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
+                        continue;
+
+                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
+                        continue;
+                    this.MoveRobot(0, loops[dc.Walls][i++]);
+
+                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool CheckBoardTraversal()
+        {
+            this.AutoSetNextWinningDestination = true;
+            this.AutoSetRobotPath = true;
+            List<Cell> visitedCells = new List<Cell>();
+            List<Cell> startingCells = new List<Cell>();
+            startingCells.Add(this.Board[0, 0]);
+            startingCells.Add(this.Board[15, 0]);
+            startingCells.Add(this.Board[0, 15]);
+            startingCells.Add(this.Board[15, 15]);
+            foreach (Cell c in this.WinningDestinations)
+                startingCells.Add(c);
+
+            foreach (Cell c in startingCells)
+            {
+                this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], c);
+
+                foreach (Cell c2 in this.Board)
+                    c2.RobotPath = 0;
+
+                Recursive(c, ref visitedCells);
+
+                bool wallsReached = true;
+                foreach (Cell c2 in this.Board)
+                {
+                    if ((c2.X == 0 || c2.Y == 0 || c2.X == this.Board.GetLength(0) || c2.Y == this.Board.GetLength(1)) 
+                        && c2.RobotPath == 0)
+                    {
+                        wallsReached = false;
+                        break;
+                    }
+                }
+
+                //If any cells being tested can't reach an edge, then we can't do it.
+                if (!wallsReached)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void Recursive(Cell c, ref List<Cell> visitedCells)
+        {
+            List<Direction> _allDirections = new List<Direction> { Direction.Up, Direction.Down, Direction.Right, Direction.Left };
+
+            foreach (Direction d in _allDirections)
+            {
+                RobotMove move = this.MoveRobot(0, d).FirstOrDefault();
+                if (move == null)
+                    continue;
+
+                if (visitedCells.Contains(move.EndingCell))
+                {
+                    //We've already moved to this exact cell, no recursion necessary.
+                    this.UndoMove();
+                }
+                else
+                {
+                    //Recursively move in each direction at this new cell.
+                    visitedCells.Add(move.EndingCell);
+                    Recursive(move.EndingCell, ref visitedCells);
+                    this.UndoMove();
+                }
+            }
+        }
     }
 }

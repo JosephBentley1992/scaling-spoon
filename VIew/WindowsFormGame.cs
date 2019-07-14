@@ -17,7 +17,7 @@ namespace ScalingSpoon.View
     public partial class WindowsFormGame : Form
     {
         private Engine _model;
-        private int focusedRobot = -1;
+        private int focusedRobot = 0;
         private GameSettings _settings = new GameSettings();
 
         public WindowsFormGame()
@@ -150,7 +150,10 @@ namespace ScalingSpoon.View
                 movesToWin = new GameSolverDepthFirst(_model).FindSolution();
                 if (movesToWin == null || movesToWin.Count == 0)
                     txtSolvedNumberOfMoves.Text = "???";
+
+                return;
             }
+
             txtSolvedNumberOfMoves.Text = movesToWin.Count.ToString();
             foreach (RobotMove move in movesToWin)
             {

@@ -94,45 +94,6 @@ namespace ScalingSpoon.Model
             }
         }
 
-        private bool CheckForLoops(DestinationCell d)
-        {
-            List<DestinationCell> cellsToCheck = new List<DestinationCell>();
-            cellsToCheck.AddRange(WinningDestinations);
-            cellsToCheck.Add(d);
-
-            foreach (DestinationCell dc in cellsToCheck)
-            {
-                int originalX = dc.X;
-                int originalY = dc.Y;
-                //Cell c = this.Board[dc.X, dc.Y];
-                Dictionary<CellWalls, List<Direction>> loops = new Dictionary<CellWalls, List<Direction>>()
-                {
-                    {CellWalls.DownAndLeft, new List<Direction>() { Direction.Up, Direction.Right, Direction.Down, Direction.Left, Direction.Right, Direction.Up, Direction.Left, Direction.Down} },
-                    {CellWalls.LeftAndUp, new List<Direction>() {Direction.Down, Direction.Right, Direction.Up, Direction.Left, Direction.Right, Direction.Down, Direction.Left, Direction.Up } },
-                    {CellWalls.UpAndRight, new List<Direction>() {Direction.Left, Direction.Down, Direction.Right, Direction.Up, Direction.Down, Direction.Left, Direction.Up, Direction.Right } },
-                    {CellWalls.RightAndDown, new List<Direction>() {Direction.Up, Direction.Left, Direction.Down, Direction.Right, Direction.Left, Direction.Up, Direction.Right, Direction.Down } }
-                };
-
-                int i = 0;
-                for (int y = 0; y < 2; y++)
-                {
-                    this.UpdateRobotPosition(0, this.RobotCurrentLocations[0], dc);
-                    this.MoveRobot(0, loops[dc.Walls][i++]);
-                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
-                        continue;
-
-                    if (this.MoveRobot(0, loops[dc.Walls][i++]).Count == 0)
-                        continue;
-                    this.MoveRobot(0, loops[dc.Walls][i++]);
-
-                    if (this.RobotCurrentLocations[0].X == originalX && this.RobotCurrentLocations[0].Y == originalY)
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
         public Robot CreateRobot(int x, int y)
         {
             //TODO: 
